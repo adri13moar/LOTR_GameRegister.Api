@@ -1,10 +1,16 @@
 using LOTR_GameRegister.Api.Repositories;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // --- 1. CONFIGURACIÓN DE SERVICIOS (Dependency Injection) ---
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Esto convierte Id -> id, QuestName -> questName automáticamente
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
 builder.Services.AddOpenApi();
 
 // Registro de tus 7 Repositorios
