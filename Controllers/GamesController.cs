@@ -24,7 +24,7 @@ namespace LOTR_GameRegister.Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] Game game)
         {
             try
@@ -40,13 +40,36 @@ namespace LOTR_GameRegister.Api.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             bool deleted = await _gameRepository.DeleteGameByIdAsync(id);
             if (!deleted) return NotFound($"Game with ID ={id} not found.");
 
-            return Ok(new { message = $"Game with ID = {id} correctly deleted." });
+            return Ok(new { message = $"Game with ID = {id} delete correctly." });
         }
+
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] Game game)
+        {
+            try
+            {
+                game.Id = id;
+                bool updated = await _gameRepository.UpdateGameAsync(game);
+
+                if (!updated)
+                {
+                    return NotFound(new { message = $"Impossible to update. ID {id} not found." });
+                }
+
+                return Ok(new { message = $"Game with ID = {id} updated correctly ." });
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error at updating: {ex.Message}");
+            }
+        }
+
     }
 }
