@@ -1,20 +1,45 @@
+using LOTR_GameRegister.Api.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// --- 1. CONFIGURACIÓN DE SERVICIOS (Dependency Injection) ---
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Registro de tus 7 Repositorios
+builder.Services.AddScoped<CycleRepository>();
+builder.Services.AddScoped<QuestRepository>();
+builder.Services.AddScoped<HeroRepository>();
+builder.Services.AddScoped<DifficultyRepository>();
+builder.Services.AddScoped<ResultRepository>();
+builder.Services.AddScoped<ReasonForDefeatRepository>();
+builder.Services.AddScoped<GameRepository>();
+
+// (Opcional) Configurar CORS para permitir que aplicaciones externas consulten tu API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
+// -----------------------------------------------------------
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- 2. CONFIGURACIÓN DEL PIPELINE (Middleware) ---
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
+
+// Aplicar la política de CORS
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
