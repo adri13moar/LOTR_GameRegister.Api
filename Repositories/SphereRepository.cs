@@ -28,7 +28,7 @@ namespace LOTR_GameRegister.Api.Repositories
                 SELECT 
                     Id as id, 
                     Name as name,
-                    Name_es as name
+                    Name_es as name_es
                 FROM Spheres 
                 WHERE Id = @Id";
 
