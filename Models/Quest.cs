@@ -7,5 +7,6 @@
         public string Name_es { get; set; } = string.Empty;
         public int CycleId { get; set; }
         public decimal? CommunityDifficulty { get; set; }
+        public Cycle Cycle { get; set; } = null!;
     }
 }

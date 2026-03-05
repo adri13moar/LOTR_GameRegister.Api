@@ -18,7 +18,6 @@ namespace LOTR_GameRegister.Api.Repositories
 
             return await db.QueryAsync<Cycle>(sql);
         }
-    
 
         public async Task<Cycle?> GetByIdAsync(int id)
         {
