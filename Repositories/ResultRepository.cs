@@ -25,7 +25,8 @@ namespace LOTR_GameRegister.Api.Repositories
             const string sql = @"
                 SELECT
                     Id as id,
-                    Name as name
+                    Name as name,
+                    Name_es as name
                 FROM Results
                 WHERE Id = @Id";
 

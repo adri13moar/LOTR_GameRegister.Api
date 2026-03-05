@@ -14,7 +14,8 @@ namespace LOTR_GameRegister.Api.Repositories
             const string sql = @"
                 SELECT 
                     Id as id,
-                    Name as name
+                    Name as name,
+                    Name_es as name_es
                 FROM Spheres
                 ORDER BY Id ASC";
             return await db.QueryAsync<Sphere>(sql);
@@ -26,7 +27,8 @@ namespace LOTR_GameRegister.Api.Repositories
             const string sql = @"
                 SELECT 
                     Id as id, 
-                    Name as name
+                    Name as name,
+                    Name_es as name
                 FROM Spheres 
                 WHERE Id = @Id";
 

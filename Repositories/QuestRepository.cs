@@ -25,6 +25,7 @@ namespace LOTR_GameRegister.Api.Repositories
             SELECT 
                 Q.*, 
                 C.Name as cycle_name, 
+                C.Name_es as cycle_name_es
                 C.Category as category
             FROM Quests Q 
             JOIN Cycles C ON Q.CycleId = C.Id 
