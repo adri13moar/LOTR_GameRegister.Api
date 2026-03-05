@@ -27,18 +27,18 @@ namespace LOTR_GameRegister.Api.Repositories
             const string sql = @"
                 SELECT 
                     Id as id, 
-                    DatePlayed as datePlayed, 
-                    IsCampaignMode as isCampaignMode,
-                    QuestId as questId,
-                    DifficultyId as difficultyId,
-                    Hero1Id as hero1Id,
-                    Hero2Id as hero2Id,
-                    Hero3Id as hero3Id,
-                    Hero4Id as hero4Id,
+                    DatePlayed as date_played, 
+                    IsCampaignMode as is_campaign_mode,
+                    QuestId as quest_id,
+                    DifficultyId as difficulty_id,
+                    Hero1Id as hero1_id,
+                    Hero2Id as hero2_id,
+                    Hero3Id as hero3_id,
+                    Hero4Id as hero4_id,
                     Spheres as spheres,
                     DeadHeroes as deadHeroes,
-                    ResultId as resultId,
-                    ReasonForDefeatId as reasonId,
+                    ResultId as result_id,
+                    ReasonForDefeatId as reason_for_defeat_id,
                     Notes as notes
                 FROM Games
                 ORDER BY DatePlayed DESC";

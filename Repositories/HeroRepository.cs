@@ -11,7 +11,13 @@ namespace LOTR_GameRegister.Api.Repositories
         public async Task<IEnumerable<Hero>> GetAllAsync()
         {
             using var db = new SqlConnection(_connectionString);
-            const string sql = "SELECT Id, Name, SphereId FROM Heroes ORDER BY Name ASC";
+            const string sql = @"
+                SELECT 
+                    Id as id, 
+                    Name as name, 
+                    SphereId as sphere_id 
+                FROM Heroes 
+                ORDER BY Name ASC";
 
             return await db.QueryAsync<Hero>(sql);
         }
@@ -20,9 +26,14 @@ namespace LOTR_GameRegister.Api.Repositories
         {
             using var db = new SqlConnection(_connectionString);
 
-            const string sql = @"SELECT Id, Name, StartingThreat, SphereId 
-                         FROM Heroes 
-                         WHERE Id = @Id";
+            const string sql = @"
+                SELECT 
+                    Id as id, 
+                    Name as name, 
+                    StartingThreat as starting_thread, 
+                    SphereId as sphere_id
+                FROM Heroes 
+                WHERE Id = @Id";
 
             return await db.QueryFirstOrDefaultAsync<Hero>(sql, new { Id = id });
         }

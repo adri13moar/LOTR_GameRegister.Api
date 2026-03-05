@@ -10,7 +10,10 @@ namespace LOTR_GameRegister.Api.Repositories
         public async Task<IEnumerable<Quest>> GetAllAsync()
         {
             using var db = new SqlConnection(_connectionString);
-            const string sql = @"SELECT * FROM Quests ORDER BY Id";
+            const string sql = @"
+                SELECT * 
+                FROM Quests 
+                ORDER BY Id";
 
             return await db.QueryAsync<Quest>(sql);
         }
@@ -19,7 +22,10 @@ namespace LOTR_GameRegister.Api.Repositories
         {
             using var db = new SqlConnection(_connectionString);
             const string sql = @"
-            SELECT Q.*, C.Name as CycleName, C.Category 
+            SELECT 
+                Q.*, 
+                C.Name as cycle_name, 
+                C.Category as category
             FROM Quests Q 
             JOIN Cycles C ON Q.CycleId = C.Id 
             ORDER BY C.Id, Q.Id";

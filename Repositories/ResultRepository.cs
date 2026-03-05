@@ -11,7 +11,10 @@ namespace LOTR_GameRegister.Api.Repositories
         public async Task<IEnumerable<Result>> GetAllAsync()
         {
             using var db = new SqlConnection(_connectionString);
-            const string sql = "SELECT * FROM Results ORDER BY Id";
+            const string sql = @"
+                SELECT * 
+                FROM Results 
+                ORDER BY Id";
 
             return await db.QueryAsync<Result>(sql);
         }
