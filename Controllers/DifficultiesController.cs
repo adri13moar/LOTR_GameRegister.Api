@@ -1,22 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LOTR_GameRegister.Api.Repositories;
+﻿using Dapper;
 using LOTR_GameRegister.Api.Models;
+using LOTR_GameRegister.Api.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class QuestsController(QuestRepository questRepository) : ControllerBase
+    public class DifficultiesController(DifficultyRepository difficultyRepository) : ControllerBase
     {
-        private readonly QuestRepository _questRepository = questRepository;
+        private readonly DifficultyRepository _difficultyRepository = difficultyRepository;
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var quests = await _questRepository.GetAllAsync();
-                return Ok(quests);
+                var difficulties = await _difficultyRepository.GetAllAsync();
+                return Ok(difficulties);
             }
             catch (Exception ex)
             {
@@ -29,7 +31,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var quest = await _questRepository.GetByIdAsync(id);
+                var quest = await _difficultyRepository.GetById(id);
 
                 if (quest == null)
                 {

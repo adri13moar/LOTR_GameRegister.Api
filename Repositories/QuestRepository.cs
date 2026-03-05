@@ -38,7 +38,7 @@ namespace LOTR_GameRegister.Api.Repositories
             );
         }
 
-        public async Task<Quest?> GetQuestAsync(int id)
+        public async Task<Quest?> GetByIdAsync(int id)
         {
             using var db = new SqlConnection(_connectionString);
 

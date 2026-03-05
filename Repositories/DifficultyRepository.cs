@@ -17,5 +17,20 @@ namespace LOTR_GameRegister.Api.Repositories
 
             return await db.QueryAsync<Difficulty>(sql);
         }
+
+        public async Task<Difficulty?> GetById(int id)
+        {
+            using var db = new SqlConnection(_connectionString);
+
+            const string sql = @"
+                SELECT
+                    Id as id,
+                    Name as name,
+                    Name_es as name_es
+                FROM Difficulties
+                WHERE Id = @Id";
+
+            return await db.QueryFirstOrDefaultAsync<Difficulty>(sql, new { Id = id });
+        }
     }
 }
