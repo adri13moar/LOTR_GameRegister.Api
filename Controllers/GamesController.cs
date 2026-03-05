@@ -11,16 +11,16 @@ namespace LOTR_GameRegister.Api.Controllers
         private readonly GameRepository _gameRepository = gameRepository;
 
         [HttpGet]
-        public async Task<IActionResult> GetHistory()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                var history = await _gameRepository.GetAllGamesAsync();
+                var history = await _gameRepository.GetAllAsync();
                 return Ok(history);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error at getting Games History: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
@@ -36,14 +36,14 @@ namespace LOTR_GameRegister.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error at registring game: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            bool deleted = await _gameRepository.DeleteGameByIdAsync(id);
+            bool deleted = await _gameRepository.DeleteByIdAsync(id);
             if (!deleted) return NotFound($"Game with ID ={id} not found.");
 
             return Ok(new { message = $"Game with ID = {id} delete correctly." });
@@ -55,7 +55,7 @@ namespace LOTR_GameRegister.Api.Controllers
             try
             {
                 game.Id = id;
-                bool updated = await _gameRepository.UpdateGameAsync(game);
+                bool updated = await _gameRepository.UpdateAsync(game);
 
                 if (!updated)
                 {
@@ -67,7 +67,7 @@ namespace LOTR_GameRegister.Api.Controllers
 
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error at updating: {ex.Message}");
+                return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
 

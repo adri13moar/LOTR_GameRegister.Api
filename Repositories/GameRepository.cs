@@ -21,7 +21,7 @@ namespace LOTR_GameRegister.Api.Repositories
             return await db.QuerySingleAsync<int>(sql, game);
         }
 
-        public async Task<IEnumerable<dynamic>> GetAllGamesAsync()
+        public async Task<IEnumerable<dynamic>> GetAllAsync()
         {
             using var db = new SqlConnection(_connectionString);
             const string sql = @"
@@ -46,7 +46,7 @@ namespace LOTR_GameRegister.Api.Repositories
             return await db.QueryAsync(sql);
         }
 
-        public async Task<bool> DeleteGameByIdAsync(int id)
+        public async Task<bool> DeleteByIdAsync(int id)
         {
             using var db = new SqlConnection(_connectionString);
             const string sql = "DELETE FROM Games WHERE Id = @Id";
@@ -54,7 +54,7 @@ namespace LOTR_GameRegister.Api.Repositories
             return rowsAffected > 0;
         }
 
-        public async Task<bool> UpdateGameAsync(Game game)
+        public async Task<bool> UpdateAsync(Game game)
         {
             using var db = new SqlConnection(_connectionString);
             const string sql = @"
