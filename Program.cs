@@ -20,6 +20,7 @@ builder.Services.AddScoped<HeroRepository>();
 builder.Services.AddScoped<DifficultyRepository>();
 builder.Services.AddScoped<ResultRepository>();
 builder.Services.AddScoped<ReasonForDefeatRepository>();
+builder.Services.AddScoped<SphereRepository>();
 builder.Services.AddScoped<GameRepository>();
 
 // (Opcional) Configurar CORS para permitir que aplicaciones externas consulten tu API

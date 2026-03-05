@@ -6,17 +6,17 @@ namespace LOTR_GameRegister.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class HeroesController(HeroRepository heroRepository) : ControllerBase
+    public class SpheresController(SphereRepository sphereRepository) : ControllerBase
     {
-        private readonly HeroRepository _heroRepository = heroRepository;
-
+        private readonly SphereRepository _sphereRepository = sphereRepository;
+        
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var heroes = await _heroRepository.GetAllAsync();
-                return Ok(heroes);
+                var spheres = await _sphereRepository.GetAllAsync();
+                return Ok(spheres);
             }
             catch (Exception ex)
             {
@@ -29,14 +29,13 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var hero = await _heroRepository.GetByIdAsync(id);
-
-                if (hero == null)
+                var spheres = await _sphereRepository.GetByIdAsync(id);
+                if (spheres == null)
                 {
-                    return NotFound($"Hero with ID {id} not found.");
+                    return NotFound($"Sphere with ID {id} not found.");
                 }
 
-                return Ok(hero);
+                return Ok(spheres);
             }
             catch (Exception ex)
             {

@@ -1,10 +1,8 @@
 ﻿namespace LOTR_GameRegister.Api.Models
 {
-    public class Hero
+    public class Sphere
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public int SphereId { get; set; }
-        public int StartingThreat { get; set; }
     }
 }
