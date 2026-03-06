@@ -1,4 +1,6 @@
-using LOTR_GameRegister.Api.Repositories;
+using Dapper;
+using LOTR_GameRegister.Api.Helpers;
+using LOTR_GameRegister.Api.Repositories.Implementations;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,9 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        // Esto convierte Id -> id, QuestName -> questName automáticamente
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
+
 builder.Services.AddOpenApi();
 
 // Registro de tus 7 Repositorios
@@ -33,6 +36,7 @@ builder.Services.AddCors(options =>
 });
 
 // -----------------------------------------------------------
+SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
 
 var app = builder.Build();
 

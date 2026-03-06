@@ -12,4 +12,10 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\DTOs\" />
+    <Folder Include="Repositories\Interfaces\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>

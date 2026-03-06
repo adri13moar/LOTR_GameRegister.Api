@@ -1,4 +1,4 @@
-﻿namespace LOTR_GameRegister.Api.Models
+﻿namespace LOTR_GameRegister.Api.Models.Entities
 {
     public class Quest
     {

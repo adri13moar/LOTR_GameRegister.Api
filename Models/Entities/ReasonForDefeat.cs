@@ -1,6 +1,6 @@
-﻿namespace LOTR_GameRegister.Api.Models
+﻿namespace LOTR_GameRegister.Api.Models.Entities
 {
-    public class Result
+    public class ReasonForDefeat
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

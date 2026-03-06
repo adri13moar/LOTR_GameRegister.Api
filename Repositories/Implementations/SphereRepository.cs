@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using LOTR_GameRegister.Api.Models;
+using LOTR_GameRegister.Api.Models.Entities;
 
 namespace LOTR_GameRegister.Api.Repositories
 {

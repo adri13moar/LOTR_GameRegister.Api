@@ -1,4 +1,4 @@
-﻿namespace LOTR_GameRegister.Api.Models
+﻿namespace LOTR_GameRegister.Api.Models.Entities
 {
     public class Hero
     {
@@ -7,6 +7,7 @@
         public string Name_es { get; set; } = string.Empty;
         public int SphereId { get; set; }
         public int StartingThreat { get; set; }
+        public bool IsDead { get; set; }
         public string? RingsDbId { get; set; }
     }
 }

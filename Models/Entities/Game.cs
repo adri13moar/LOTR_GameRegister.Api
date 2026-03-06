@@ -1,9 +1,9 @@
-﻿namespace LOTR_GameRegister.Api.Models
+﻿namespace LOTR_GameRegister.Api.Models.Entities
 {
     public class Game
     {
         public int Id { get; set; }
-        public DateTime DatePlayed { get; set; }
+        public DateOnly DatePlayed { get; set; }
         public bool IsCampaignMode { get; set; }
         public int QuestId { get; set; }
         public int DifficultyId { get; set; }

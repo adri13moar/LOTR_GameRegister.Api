@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using LOTR_GameRegister.Api.Models;
-using LOTR_GameRegister.Api.Repositories;
+using LOTR_GameRegister.Api.Repositories.Implementations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 

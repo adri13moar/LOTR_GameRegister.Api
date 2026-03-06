@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using LOTR_GameRegister.Api.Models;
+using LOTR_GameRegister.Api.Models.Entities;
 
-namespace LOTR_GameRegister.Api.Repositories
+namespace LOTR_GameRegister.Api.Repositories.Implementations
 {
     public class QuestRepository(IConfiguration config)
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LOTR_GameRegister.Api.Repositories;
 using LOTR_GameRegister.Api.Models;
+using LOTR_GameRegister.Api.Repositories.Implementations;
 
 namespace LOTR_GameRegister.Api.Controllers
 {

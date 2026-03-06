@@ -1,14 +1,14 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using LOTR_GameRegister.Api.Models;
+using LOTR_GameRegister.Api.Models.Entities;
 
-namespace LOTR_GameRegister.Api.Repositories
+namespace LOTR_GameRegister.Api.Repositories.Implementations
 {
     public class GameRepository(IConfiguration config)
     {
         private readonly string _connectionString = config.GetConnectionString("DefaultConnection")!;
 
-        public async Task<int> CreateGameAsync(Game game)
+        public async Task<int> CreateAsync(Game game)
         {
             using var db = new SqlConnection(_connectionString);
             await db.OpenAsync();
@@ -46,12 +46,19 @@ namespace LOTR_GameRegister.Api.Repositories
                     const string sqlHeroes = @"
                         INSERT INTO GameHeroes (
                             GameId, 
-                            HeroId) 
+                            HeroId,
+                            IsDead) 
                         VALUES (
                             @GameId, 
-                            @HeroId)";
+                            @HeroId,
+                            @IsDead)";
 
-                    var batchHeroes = game.Heroes.Select(h => new { GameId = gameId, HeroId = h.Id });
+                    var batchHeroes = game.Heroes.Select(h => new 
+                    { 
+                        GameId = gameId,
+                        HeroId = h.Id,
+                        IsDead = h.IsDead
+                    });
 
                     await db.ExecuteAsync(sqlHeroes, batchHeroes, transaction);
                 }
@@ -103,6 +110,40 @@ namespace LOTR_GameRegister.Api.Repositories
             return gameDictionary.Values;
         }
 
+        public async Task<Game?> GetByIdAsync(int id)
+        {
+            using var db = new SqlConnection(_connectionString);
+            const string sql = @"
+                SELECT g.*, h.*, gh.IsDead 
+                FROM Games g
+                INNER JOIN GameHeroes gh ON g.Id = gh.GameId
+                INNER JOIN Heroes h ON gh.HeroId = h.Id
+                WHERE g.Id = @id";
+
+            var gameDictionary = new Dictionary<int, Game>();
+
+            var result = await db.QueryAsync<Game, Hero, Game>(
+                sql,
+                (game, hero) =>
+                {
+                    if (!gameDictionary.TryGetValue(game.Id, out var gameEntry))
+                    {
+                        gameEntry = game;
+                        gameEntry.Heroes = new List<Hero>();
+                        gameDictionary.Add(gameEntry.Id, gameEntry);
+                    }
+
+                    gameEntry.Heroes.Add(hero);
+
+                    return gameEntry;
+                },
+                new { id },
+                splitOn: "Id"
+            );
+
+            return result.FirstOrDefault();
+        }
+
         public async Task<bool> UpdateAsync(Game game)
         {
             using var db = new SqlConnection(_connectionString);
@@ -114,17 +155,17 @@ namespace LOTR_GameRegister.Api.Repositories
             try
             {
                 const string sqlUpdateGame = @"
-                UPDATE Games 
-                SET QuestId = @QuestId, 
-                    IsCampaignMode = @IsCampaignMode, 
-                    DifficultyId = @DifficultyId, 
-                    Spheres = @Spheres, 
-                    DeadHeroes = @DeadHeroes, 
-                    ResultId = @ResultId, 
-                    ReasonForDefeatId = @ReasonForDefeatId, 
-                    DatePlayed = @DatePlayed, 
-                    Notes = @Notes
-                WHERE Id = @Id";
+                    UPDATE Games 
+                    SET QuestId = @QuestId, 
+                        IsCampaignMode = @IsCampaignMode, 
+                        DifficultyId = @DifficultyId, 
+                        Spheres = @Spheres, 
+                        DeadHeroes = @DeadHeroes, 
+                        ResultId = @ResultId, 
+                        ReasonForDefeatId = @ReasonForDefeatId, 
+                        DatePlayed = @DatePlayed, 
+                        Notes = @Notes
+                    WHERE Id = @Id";
 
                 await db.ExecuteAsync(sqlUpdateGame, game, transaction);
 
@@ -170,43 +211,6 @@ namespace LOTR_GameRegister.Api.Repositories
             int rowsAffected = await db.ExecuteAsync(sql, new { Id = id });
 
             return rowsAffected > 0;
-        }
-
-        public async Task<Game?> GetByIdAsync(int id)
-        {
-            using var db = new SqlConnection(_connectionString);
-
-            const string sql = @"
-                SELECT g.*, h.*
-                FROM Games g
-                LEFT JOIN GameHeroes gh ON g.Id = gh.GameId
-                LEFT JOIN Heroes h ON gh.HeroId = h.Id
-                WHERE g.Id = @Id";
-
-            var gameDictionary = new Dictionary<int, Game>();
-
-            var result = await db.QueryAsync<Game, Hero, Game>(
-                sql,
-                (game, hero) =>
-                {
-                    if (!gameDictionary.TryGetValue(game.Id, out var currentGame))
-                    {
-                        currentGame = game;
-                        currentGame.Heroes = new List<Hero>();
-                        gameDictionary.Add(currentGame.Id, currentGame);
-                    }
-
-                    if (hero != null)
-                    {
-                        currentGame.Heroes.Add(hero);
-                    }
-                    return currentGame;
-                },
-                new { Id = id },
-                splitOn: "Id"
-            );
-
-            return result.Distinct().FirstOrDefault();
         }
     }
 }

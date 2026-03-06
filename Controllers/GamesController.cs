@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LOTR_GameRegister.Api.Repositories;
-using LOTR_GameRegister.Api.Models;
+using LOTR_GameRegister.Api.Models.Entities;
+using LOTR_GameRegister.Api.Repositories.Implementations;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
@@ -46,7 +46,7 @@ namespace LOTR_GameRegister.Api.Controllers
             {
                 if (game == null) return BadRequest("Game data is not valid.");
 
-                int newId = await _gameRepository.CreateGameAsync(game);
+                int newId = await _gameRepository.CreateAsync(game);
                 game.Id = newId;
 
                 return CreatedAtAction(nameof(GetAll), new { id = newId }, game);
