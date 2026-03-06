@@ -13,7 +13,7 @@ namespace LOTR_GameRegister.Api.Repositories.Implementations
             using var db = new SqlConnection(_connectionString);
             const string sql = @"
                 SELECT * 
-                FROM ReasonForDefeat 
+                FROM ReasonsForDefeat 
                 ORDER BY Id";
 
             return await db.QueryAsync<ReasonForDefeat>(sql);
@@ -23,7 +23,7 @@ namespace LOTR_GameRegister.Api.Repositories.Implementations
         {
             using var db = new SqlConnection(_connectionString);
             const string sql = @"
-                SELECT * FROM ReasonForDefeat 
+                SELECT * FROM ReasonsForDefeat 
                 WHERE Id = @Id";
 
             return await db.QueryFirstOrDefaultAsync<ReasonForDefeat>(sql, new { Id = id });
