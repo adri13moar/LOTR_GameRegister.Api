@@ -1,91 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LOTR_GameRegister.Api.Models.Entities;
-using LOTR_GameRegister.Api.Repositories.Implementations;
+﻿using LOTR_GameRegister.Api.Models.Entities;
+using LOTR_GameRegister.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class GamesController(GameRepository gameRepository) : ControllerBase
+    public class GamesController : ControllerBase
     {
-        private readonly GameRepository _gameRepository = gameRepository;
+        private readonly IGameService _gameService;
+
+        public GamesController(IGameService gameService)
+        {
+            _gameService = gameService;
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var history = await _gameRepository.GetAllAsync();
-                return Ok(history);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
+            var games = await _gameService.GetAllGamesAsync();
+            return Ok(games);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var game = await _gameRepository.GetByIdAsync(id);
-                if (game == null) return NotFound($"Game with ID {id} not found.");
-                return Ok(game);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
+            var game = await _gameService.GetGameByIdAsync(id);
+            if (game == null) return NotFound($"No se encontró la partida con ID {id}");
+
+            return Ok(game);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Game game)
         {
-            try
-            {
-                if (game == null) return BadRequest("Game data is not valid.");
+            if (game == null) return BadRequest("Los datos de la partida son nulos.");
 
-                int newId = await _gameRepository.CreateAsync(game);
-                game.Id = newId;
+            var newId = await _gameService.CreateGameAsync(game);
+            var createdGame = await _gameService.GetGameByIdAsync(newId);
 
-                return CreatedAtAction(nameof(GetAll), new { id = newId }, game);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
+            return CreatedAtAction(nameof(GetById), new { id = newId }, createdGame);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteById(int id)
-        {
-            bool deleted = await _gameRepository.DeleteByIdAsync(id);
-            if (!deleted) return NotFound($"Game with ID ={id} not found.");
-
-            return Ok(new { message = $"Game with ID = {id} delete correctly." });
-        }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Game game)
         {
-            try
-            {
-                game.Id = id;
-                bool updated = await _gameRepository.UpdateAsync(game);
+            if (id != game.Id) return BadRequest("El ID de la URL no coincide con el ID del cuerpo.");
 
-                if (!updated)
-                {
-                    return NotFound(new { message = $"Impossible to update. ID {id} not found." });
-                }
+            var success = await _gameService.UpdateGameAsync(game);
+            if (!success) return NotFound();
 
-                return Ok(new { message = $"Game with ID = {id} updated correctly ." });
-            }
+            return NoContent();
+        }
 
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var success = await _gameService.DeleteGameAsync(id);
+            if (!success) return NotFound();
+
+            return NoContent();
         }
     }
 }

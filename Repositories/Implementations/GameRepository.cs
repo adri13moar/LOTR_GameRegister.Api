@@ -1,10 +1,11 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
 using LOTR_GameRegister.Api.Models.Entities;
+using LOTR_GameRegister.Api.Repositories.Interfaces;
+using Microsoft.Data.SqlClient;
 
 namespace LOTR_GameRegister.Api.Repositories.Implementations
 {
-    public class GameRepository(IConfiguration config)
+    public class GameRepository(IConfiguration config) : IGameRepository
     {
         private readonly string _connectionString = config.GetConnectionString("DefaultConnection")!;
 
@@ -180,12 +181,19 @@ namespace LOTR_GameRegister.Api.Repositories.Implementations
                     const string sqlInsertHeroes = @"
                         INSERT INTO GameHeroes (
                             GameId, 
-                            HeroId) 
+                            HeroId,
+                            IsDead) 
                         VALUES (
                             @GameId, 
-                            @HeroId)";
+                            @HeroId,
+                            @IsDead)";
 
-                    var batchHeroes = game.Heroes.Select(h => new { GameId = game.Id, HeroId = h.Id });
+                    var batchHeroes = game.Heroes.Select(h => new
+                    {
+                        GameId = game.Id,
+                        HeroId = h.Id,
+                        IsDead = h.IsDead
+                    });
 
                     await db.ExecuteAsync(sqlInsertHeroes, batchHeroes, transaction);
                 }

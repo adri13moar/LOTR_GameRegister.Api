@@ -1,10 +1,11 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
 using LOTR_GameRegister.Api.Models.Entities;
+using LOTR_GameRegister.Api.Repositories.Interfaces;
+using Microsoft.Data.SqlClient;
 
 namespace LOTR_GameRegister.Api.Repositories.Implementations
 {
-    public class HeroRepository(IConfiguration config)
+    public class HeroRepository(IConfiguration config) : IHeroRepository
     {
         private readonly string _connectionString = config.GetConnectionString("DefaultConnection")!;
 
@@ -41,6 +42,17 @@ namespace LOTR_GameRegister.Api.Repositories.Implementations
                 WHERE Id = @Id";
 
             return await db.QueryFirstOrDefaultAsync<Hero>(sql, new { Id = id });
+        }
+
+        public async Task<IEnumerable<Hero>> GetByIdsAsync(List<int> ids)
+        {
+            using var db = new SqlConnection(_connectionString);
+            const string sql = @"
+                SELECT * 
+                FROM Heroes
+                WHERE Id IN @ids";
+
+            return await db.QueryAsync<Hero>( sql, new { ids });
         }
     }
 }
