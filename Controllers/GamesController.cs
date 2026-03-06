@@ -24,15 +24,17 @@ namespace LOTR_GameRegister.Api.Controllers
             }
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] Game game)
         {
             try
             {
-                if (game == null) return BadRequest("Game data ar not valid.");
-                int newId = await _gameRepository.CreateGameAsync(game);
+                if (game == null) return BadRequest("Game data is not valid.");
 
-                return Ok(new { Message = "Game registered successfully!", Id = newId });
+                int newId = await _gameRepository.CreateGameAsync(game);
+                game.Id = newId;
+
+                return CreatedAtAction(nameof(GetAll), new { id = newId }, game);
             }
             catch (Exception ex)
             {
@@ -40,7 +42,7 @@ namespace LOTR_GameRegister.Api.Controllers
             }
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             bool deleted = await _gameRepository.DeleteByIdAsync(id);
@@ -49,7 +51,7 @@ namespace LOTR_GameRegister.Api.Controllers
             return Ok(new { message = $"Game with ID = {id} delete correctly." });
         }
 
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Game game)
         {
             try
@@ -70,6 +72,5 @@ namespace LOTR_GameRegister.Api.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
-
     }
 }

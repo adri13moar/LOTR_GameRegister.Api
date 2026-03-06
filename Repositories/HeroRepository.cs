@@ -17,6 +17,8 @@ namespace LOTR_GameRegister.Api.Repositories
                     Name as name, 
                     Name_es as name_es,
                     SphereId as sphere_id 
+                    StartingThreat as starting_thread, 
+                    RingsDbId as rings_db_id
                 FROM Heroes 
                 ORDER BY Name ASC";
 
@@ -33,7 +35,8 @@ namespace LOTR_GameRegister.Api.Repositories
                     Name as name, 
                     Name_es as name_es,
                     StartingThreat as starting_thread, 
-                    SphereId as sphere_id
+                    SphereId as sphere_id,
+                    RingsDbId as rings_db_id
                 FROM Heroes 
                 WHERE Id = @Id";
 
