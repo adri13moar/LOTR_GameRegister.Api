@@ -24,6 +24,21 @@ namespace LOTR_GameRegister.Api.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            try
+            {
+                var game = await _gameRepository.GetByIdAsync(id);
+                if (game == null) return NotFound($"Game with ID {id} not found.");
+                return Ok(game);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Game game)
         {
@@ -43,7 +58,7 @@ namespace LOTR_GameRegister.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteById(int id)
         {
             bool deleted = await _gameRepository.DeleteByIdAsync(id);
             if (!deleted) return NotFound($"Game with ID ={id} not found.");

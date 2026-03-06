@@ -13,13 +13,13 @@ namespace LOTR_GameRegister.Api.Repositories
             using var db = new SqlConnection(_connectionString);
             const string sql = @"
                 SELECT 
-                    Id as id, 
-                    Name as name, 
-                    Name_es as name_es,
-                    SphereId as sphere_id 
-                    StartingThreat as starting_thread, 
-                    RingsDbId as rings_db_id
-                FROM Heroes 
+                    Id, 
+                    Name, 
+                    Name_es, 
+                    SphereId, 
+                    StartingThreat, 
+                    RingsDbId
+                FROM Heroes
                 ORDER BY Name ASC";
 
             return await db.QueryAsync<Hero>(sql);
@@ -31,12 +31,12 @@ namespace LOTR_GameRegister.Api.Repositories
 
             const string sql = @"
                 SELECT 
-                    Id as id, 
-                    Name as name, 
-                    Name_es as name_es,
-                    StartingThreat as starting_thread, 
-                    SphereId as sphere_id,
-                    RingsDbId as rings_db_id
+                    Id, 
+                    Name, 
+                    Name_es, 
+                    SphereId, 
+                    StartingThreat, 
+                    RingsDbId
                 FROM Heroes 
                 WHERE Id = @Id";
 
