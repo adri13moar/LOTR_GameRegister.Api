@@ -18,5 +18,15 @@ namespace LOTR_GameRegister.Api.Repositories.Implementations
 
             return await db.QueryAsync<ReasonForDefeat>(sql);
         }
+
+        public async Task<ReasonForDefeat?> GetByIdAsync(int id)
+        {
+            using var db = new SqlConnection(_connectionString);
+            const string sql = @"
+                SELECT * FROM ReasonForDefeat 
+                WHERE Id = @Id";
+
+            return await db.QueryFirstOrDefaultAsync<ReasonForDefeat>(sql, new { Id = id });
+        }
     }
 }

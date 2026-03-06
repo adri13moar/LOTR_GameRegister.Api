@@ -18,7 +18,6 @@ namespace LOTR_GameRegister.Api.Repositories.Implementations
                     q.Name as name, 
                     q.Name_es as name_es, 
                     q.CommunityDifficulty as community_difficulty, 
-                    q.CycleId as cycle_id,
                     c.Id as id,
                     c.Name as name, 
                     c.Name_es as name_es, 

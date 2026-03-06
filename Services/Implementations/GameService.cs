@@ -43,14 +43,14 @@ namespace LOTR_GameRegister.Api.Services
 
         private async Task RebuildGameCalculations(Game game)
         {
-            game.DeadHeroes = game.Heroes?.Count(h => h.IsDead) ?? 0;
+            game.DeadHeroes = game.Heroes?.Count(heroe => heroe.IsDead) ?? 0;
 
             if (game.Heroes != null && game.Heroes.Any())
             {
-                var ids = game.Heroes.Select(h => h.Id).ToList();
+                var ids = game.Heroes.Select(heroe => heroe.Id).ToList();
                 var heroesDetails = await _heroRepository.GetByIdsAsync(ids);
 
-                game.Spheres = heroesDetails.Select(h => h.SphereId).Distinct().Count();
+                game.Spheres = heroesDetails.Select(heroe => heroe.SphereId).Distinct().Count();
             }
 
             else

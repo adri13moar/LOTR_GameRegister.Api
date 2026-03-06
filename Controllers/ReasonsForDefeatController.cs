@@ -5,17 +5,17 @@ namespace LOTR_GameRegister.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class QuestsController(QuestRepository questRepository) : ControllerBase
+    public class ReasonsForDefeatController(ReasonForDefeatRepository reasonRepository) : ControllerBase
     {
-        private readonly QuestRepository _questRepository = questRepository;
+        private readonly ReasonForDefeatRepository _reasonRepository = reasonRepository;
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var quests = await _questRepository.GetAllAsync();
-                return Ok(quests);
+                var reasons = await _reasonRepository.GetAllAsync();
+                return Ok(reasons);
             }
             catch (Exception ex)
             {
@@ -28,14 +28,14 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var quest = await _questRepository.GetByIdAsync(id);
+                var reason = await _reasonRepository.GetByIdAsync(id);
 
-                if (quest == null)
+                if (reason == null)
                 {
-                    return NotFound($"Quest with ID {id} not found.");
+                    return NotFound($"Reason for defeat with ID {id} not found.");
                 }
 
-                return Ok(quest);
+                return Ok(reason);
             }
             catch (Exception ex)
             {
