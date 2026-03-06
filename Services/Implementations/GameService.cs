@@ -1,5 +1,4 @@
 ﻿using LOTR_GameRegister.Api.Models.Entities;
-using LOTR_GameRegister.Api.Repositories.Implementations;
 using LOTR_GameRegister.Api.Repositories.Interfaces;
 using LOTR_GameRegister.Api.Services.Interfaces;
 
@@ -25,19 +24,39 @@ namespace LOTR_GameRegister.Api.Services
         public async Task<int> CreateGameAsync(Game game)
         {
             game.DatePlayed = DateOnly.FromDateTime(DateTime.Now);
-            game.DeadHeroes = game.Heroes.Count(h => h.IsDead);
-
-            var heroIds = game.Heroes.Select(h => h.Id).ToList();
-            var heroesDetails = await _heroRepository.GetByIdsAsync(heroIds);
-            game.Spheres = heroesDetails.Select(h => h.SphereId).Distinct().Count();
+            await RebuildGameCalculations(game);
 
             return await _gameRepository.CreateAsync(game);
         }
 
         public async Task<bool> UpdateGameAsync(Game game)
-            => await _gameRepository.UpdateAsync(game);
+        {
+            await RebuildGameCalculations(game);
+
+            return await _gameRepository.UpdateAsync(game);
+        }
 
         public async Task<bool> DeleteGameAsync(int id)
-            => await _gameRepository.DeleteByIdAsync(id);
+        {
+            return await _gameRepository.DeleteByIdAsync(id);
+        }
+
+        private async Task RebuildGameCalculations(Game game)
+        {
+            game.DeadHeroes = game.Heroes?.Count(h => h.IsDead) ?? 0;
+
+            if (game.Heroes != null && game.Heroes.Any())
+            {
+                var ids = game.Heroes.Select(h => h.Id).ToList();
+                var heroesDetails = await _heroRepository.GetByIdsAsync(ids);
+
+                game.Spheres = heroesDetails.Select(h => h.SphereId).Distinct().Count();
+            }
+
+            else
+            {
+                game.Spheres = 0;
+            }
+        }
     }
 }
