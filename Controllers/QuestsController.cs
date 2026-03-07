@@ -3,12 +3,18 @@ using LOTR_GameRegister.Api.Repositories.Implementations;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
+    /// <summary>
+    /// Endpoints to retrieve quest metadata used in games.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class QuestsController(QuestRepository questRepository) : ControllerBase
     {
         private readonly QuestRepository _questRepository = questRepository;
 
+        /// <summary>
+        /// Retrieves all quests.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -23,6 +29,10 @@ namespace LOTR_GameRegister.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves a quest by id.
+        /// </summary>
+        /// <param name="id">Quest identifier.</param>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

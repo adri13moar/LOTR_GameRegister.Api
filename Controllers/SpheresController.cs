@@ -5,12 +5,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
+    /// <summary>
+    /// API endpoints for retrieving sphere data used in the game register.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class SpheresController(ISphereRepository sphereRepository) : ControllerBase
     {
         private readonly ISphereRepository _sphereRepository = sphereRepository;
 
+        /// <summary>
+        /// Retrieves all spheres.
+        /// </summary>
+        /// <returns>List of spheres.</returns>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -25,6 +32,11 @@ namespace LOTR_GameRegister.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves a sphere by its identifier.
+        /// </summary>
+        /// <param name="id">Sphere identifier.</param>
+        /// <returns>The requested sphere or 404 if not found.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

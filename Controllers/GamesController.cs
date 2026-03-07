@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
+    /// <summary>
+    /// Manages game records (create, read, update, delete) in the register.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class GamesController : ControllerBase
@@ -16,6 +19,9 @@ namespace LOTR_GameRegister.Api.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves all game records.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -23,6 +29,10 @@ namespace LOTR_GameRegister.Api.Controllers
             return Ok(games);
         }
 
+        /// <summary>
+        /// Retrieves a single game by id.
+        /// </summary>
+        /// <param name="id">Game identifier.</param>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -33,6 +43,10 @@ namespace LOTR_GameRegister.Api.Controllers
         }
 
 
+        /// <summary>
+        /// Creates a new game record.
+        /// </summary>
+        /// <param name="game">Game payload.</param>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Game game)
         {
@@ -45,6 +59,11 @@ namespace LOTR_GameRegister.Api.Controllers
         }
 
 
+        /// <summary>
+        /// Updates an existing game.
+        /// </summary>
+        /// <param name="id">Identifier of the game to update.</param>
+        /// <param name="game">Updated game object.</param>
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Game game)
         {
@@ -56,6 +75,10 @@ namespace LOTR_GameRegister.Api.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Deletes a game by id.
+        /// </summary>
+        /// <param name="id">Identifier of the game to delete.</param>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

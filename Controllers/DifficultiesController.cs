@@ -6,12 +6,18 @@ using Microsoft.Data.SqlClient;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
+    /// <summary>
+    /// Endpoints to retrieve difficulty levels used by quests.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class DifficultiesController(DifficultyRepository difficultyRepository) : ControllerBase
     {
         private readonly DifficultyRepository _difficultyRepository = difficultyRepository;
 
+        /// <summary>
+        /// Retrieves all difficulties.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -26,6 +32,10 @@ namespace LOTR_GameRegister.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves a difficulty by id.
+        /// </summary>
+        /// <param name="id">Difficulty identifier.</param>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

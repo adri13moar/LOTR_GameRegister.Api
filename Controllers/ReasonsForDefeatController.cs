@@ -3,12 +3,18 @@ using LOTR_GameRegister.Api.Repositories.Implementations;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
+    /// <summary>
+    /// Endpoints to retrieve reasons for defeat used to categorize lost games.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class ReasonsForDefeatController(ReasonForDefeatRepository reasonRepository) : ControllerBase
     {
         private readonly ReasonForDefeatRepository _reasonRepository = reasonRepository;
 
+        /// <summary>
+        /// Retrieves all reasons for defeat.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -23,6 +29,10 @@ namespace LOTR_GameRegister.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves a reason for defeat by id.
+        /// </summary>
+        /// <param name="id">Identifier of the reason for defeat.</param>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

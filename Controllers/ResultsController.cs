@@ -4,12 +4,18 @@ using LOTR_GameRegister.Api.Repositories.Implementations;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
+    /// <summary>
+    /// Provides endpoints to list game results and details about outcomes.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class ResultsController(ResultRepository resultRepository) : ControllerBase
     {
         private readonly ResultRepository _resultRepository = resultRepository;
 
+        /// <summary>
+        /// Retrieves all recorded results.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -24,6 +30,10 @@ namespace LOTR_GameRegister.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves a single result by id.
+        /// </summary>
+        /// <param name="id">Result identifier.</param>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
