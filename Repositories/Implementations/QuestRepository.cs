@@ -1,10 +1,11 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using LOTR_GameRegister.Api.Models.Entities;
+using LOTR_GameRegister.Api.Repositories.Interfaces;
 
 namespace LOTR_GameRegister.Api.Repositories.Implementations
 {
-    public class QuestRepository(IConfiguration config)
+    public class QuestRepository(IConfiguration config) : IQuestRepository
     {
         private readonly string _connectionString = config.GetConnectionString("DefaultConnection")!;
 

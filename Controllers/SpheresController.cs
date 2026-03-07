@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LOTR_GameRegister.Api.Models;
+﻿using LOTR_GameRegister.Api.Models;
 using LOTR_GameRegister.Api.Repositories.Implementations;
+using LOTR_GameRegister.Api.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SpheresController(SphereRepository sphereRepository) : ControllerBase
+    public class SpheresController(ISphereRepository sphereRepository) : ControllerBase
     {
-        private readonly SphereRepository _sphereRepository = sphereRepository;
-        
+        private readonly ISphereRepository _sphereRepository = sphereRepository;
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

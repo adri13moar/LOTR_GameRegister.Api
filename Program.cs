@@ -20,15 +20,14 @@ builder.Services.AddControllers()
 builder.Services.AddOpenApi();
 
 // --- SECTION 3: DEPENDENCY INJECTION (REPOSITORIES) ---
-builder.Services.AddScoped<IHeroRepository, HeroRepository>();
+builder.Services.AddScoped<ICycleRepository, CycleRepository>();
+builder.Services.AddScoped<IDifficultyRepository, DifficultyRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddScoped<IHeroRepository, HeroRepository>();
+builder.Services.AddScoped<IQuestRepository, QuestRepository>();
+builder.Services.AddScoped<IReasonForDefeatRepository, ReasonForDefeatRepository>();
+builder.Services.AddScoped<IResultRepository, ResultRepository>();
 builder.Services.AddScoped<ISphereRepository, SphereRepository>();
-
-builder.Services.AddScoped<CycleRepository>();
-builder.Services.AddScoped<QuestRepository>();
-builder.Services.AddScoped<DifficultyRepository>();
-builder.Services.AddScoped<ResultRepository>();
-builder.Services.AddScoped<ReasonForDefeatRepository>();
 
 // --- SECTION 4: DEPENDENCY INJECTION (SERVICES) ---
 builder.Services.AddScoped<IGameService, GameService>();

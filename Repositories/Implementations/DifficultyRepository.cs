@@ -4,7 +4,7 @@ using LOTR_GameRegister.Api.Models.Entities;
 
 namespace LOTR_GameRegister.Api.Repositories.Implementations
 {
-    public class DifficultyRepository(IConfiguration config)
+    public class DifficultyRepository(IConfiguration config) : IDifficultyRepository
     {
         private readonly string _connectionString = config.GetConnectionString("DefaultConnection")!;
         public async Task<IEnumerable<Difficulty>> GetAllAsync()

@@ -4,7 +4,7 @@ using LOTR_GameRegister.Api.Models.Entities;
 
 namespace LOTR_GameRegister.Api.Repositories.Implementations
 {
-    public class ReasonForDefeatRepository(IConfiguration config)
+    public class ReasonForDefeatRepository(IConfiguration config) : IReasonForDefeatRepository
     {
         private readonly string _connectionString = config.GetConnectionString("DefaultConnection")!;
 

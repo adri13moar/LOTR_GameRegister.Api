@@ -4,7 +4,7 @@ using LOTR_GameRegister.Api.Models.Entities;
 
 namespace LOTR_GameRegister.Api.Repositories.Implementations
 {
-    public class CycleRepository(IConfiguration config)
+    public class CycleRepository(IConfiguration config) : ICycleRepository
     {
         private readonly string _connectionString = config.GetConnectionString("DefaultConnection")!;
 
