@@ -1,0 +1,27 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: lotr_db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=TuPasswordSeguro123! # Keep this consistent with appsettings.json
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "TuPasswordSeguro123!", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Database initialization script
+
+  api:
+    build: .
+    container_name: lotr_api
+    ports:
+      - "5000:8080"
+    depends_on:
+      db:
+        condition: service_healthy # Wait for database to be ready
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=LOTR_GameRegister;User Id=sa;Password=TuPasswordSeguro123!;TrustServerCertificate=True;
