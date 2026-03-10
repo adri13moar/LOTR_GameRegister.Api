@@ -62,14 +62,14 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var user = await userService.LoginAsync(loginDto);
+                var authResponse = await userService.LoginAsync(loginDto);
 
-                if (user == null)
+                if (authResponse == null)
                 {
                     return Unauthorized("Invalid username or password.");
                 }
 
-                return Ok(user);
+                return Ok(authResponse);
             }
             catch (Exception ex)
             {

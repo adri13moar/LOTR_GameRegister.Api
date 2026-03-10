@@ -1,13 +1,17 @@
-﻿using LOTR_GameRegister.Api.Models.Entities;
+﻿using BCrypt.Net;
 using LOTR_GameRegister.Api.Models.Dto;
+using LOTR_GameRegister.Api.Models.Entities;
 using LOTR_GameRegister.Api.Models.Enums;
 using LOTR_GameRegister.Api.Repositories.Interfaces;
 using LOTR_GameRegister.Api.Services.Interfaces;
-using BCrypt.Net;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace LOTR_GameRegister.Api.Services.Implementations;
 
-public class UserService(IUserRepository userRepository) : IUserService
+public class UserService(IUserRepository userRepository, IConfiguration config) : IUserService
 {
     public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
     {
@@ -42,7 +46,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         return result > 0;
     }
 
-    public async Task<UserDto?> LoginAsync(UserLoginDto loginDto)
+    public async Task<AuthResponseDto?> LoginAsync(UserLoginDto loginDto)
     {
         var user = await userRepository.GetByUsernameAsync(loginDto.Username);
 
@@ -51,13 +55,42 @@ public class UserService(IUserRepository userRepository) : IUserService
             return null;
         }
 
-        return new UserDto
+        var token = GenerateJwtToken(user);
+
+        return new AuthResponseDto
         {
-            Id = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            Role = user.Role,
-            CreatedAt = user.CreatedAt
+            User = new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt
+            },
+            Token = token
         };
+    }
+
+    private string GenerateJwtToken(User user)
+    {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role)
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: config["Jwt:Issuer"],
+            audience: config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(double.Parse(config["Jwt:DurationInMinutes"]!)),
+            signingCredentials: credentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
