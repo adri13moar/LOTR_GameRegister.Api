@@ -27,7 +27,7 @@
 | **Backend** | ASP.NET Core Web API (.NET 10) |
 | **Database** | Microsoft SQL Server 2022 |
 | **Infrastructure** | Docker & Docker Compose |
-| **ORM** | Entity Framework Core |
+| **ORM** | Dapper |
 
 ### 📦 Quick Start
 
@@ -92,7 +92,7 @@ ORDER BY MatchesPlayed DESC;
 | **Backend** | ASP.NET Core Web API (.NET 10) |
 | **Base de Datos** | Microsoft SQL Server 2022 |
 | **Infraestructura** | Docker & Docker Compose |
-| **ORM** | Entity Framework Core |
+| **ORM** | Dapper |
 
 ### 📦 Inicio Rápido
 
