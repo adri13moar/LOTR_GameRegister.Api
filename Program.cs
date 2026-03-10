@@ -3,6 +3,7 @@ using LOTR_GameRegister.Api.Helpers;
 using LOTR_GameRegister.Api.Repositories.Implementations;
 using LOTR_GameRegister.Api.Repositories.Interfaces;
 using LOTR_GameRegister.Api.Services;
+using LOTR_GameRegister.Api.Services.Implementations;
 using LOTR_GameRegister.Api.Services.Interfaces;
 using System.Text.Json;
 
@@ -49,6 +50,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // --- SECTIONS 3, 4, 5, 6 (REPOSITORIES AND SERVICES) ---
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICycleRepository, CycleRepository>();
 builder.Services.AddScoped<IDifficultyRepository, DifficultyRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
@@ -58,6 +60,7 @@ builder.Services.AddScoped<IReasonForDefeatRepository, ReasonForDefeatRepository
 builder.Services.AddScoped<IResultRepository, ResultRepository>();
 builder.Services.AddScoped<ISphereRepository, SphereRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddCors(options =>
 {

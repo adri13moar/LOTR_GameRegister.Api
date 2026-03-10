@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LOTR_GameRegister.Api.Models;
-using LOTR_GameRegister.Api.Repositories.Implementations;
+using LOTR_GameRegister.Api.Repositories.Interfaces;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
@@ -9,10 +9,8 @@ namespace LOTR_GameRegister.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class HeroesController(HeroRepository heroRepository) : ControllerBase
+    public class HeroesController(IHeroRepository heroRepository) : ControllerBase
     {
-        private readonly HeroRepository _heroRepository = heroRepository;
-
         /// <summary>
         /// Retrieves all heroes.
         /// </summary>
@@ -21,7 +19,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var heroes = await _heroRepository.GetAllAsync();
+                var heroes = await heroRepository.GetAllAsync();
                 return Ok(heroes);
             }
             catch (Exception ex)
@@ -39,7 +37,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var hero = await _heroRepository.GetByIdAsync(id);
+                var hero = await heroRepository.GetByIdAsync(id);
 
                 if (hero == null)
                 {

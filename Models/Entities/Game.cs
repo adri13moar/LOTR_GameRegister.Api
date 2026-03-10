@@ -13,5 +13,6 @@
         public int? ReasonForDefeatId { get; set; }
         public string? Notes { get; set; }
         public List<Hero> Heroes { get; set; } = new List<Hero>();
+        public List<User> Users { get; set; } = [];
     }
 }
