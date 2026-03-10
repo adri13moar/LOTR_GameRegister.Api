@@ -52,5 +52,29 @@ namespace LOTR_GameRegister.Api.Controllers
                 return StatusCode(500, $"Internal error: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Authenticates a user and returns their information.
+        /// </summary>
+        /// <param name="loginDto">User credentials.</param>
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
+        {
+            try
+            {
+                var user = await userService.LoginAsync(loginDto);
+
+                if (user == null)
+                {
+                    return Unauthorized("Invalid username or password.");
+                }
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal error: {ex.Message}");
+            }
+        }
     }
 }

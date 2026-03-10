@@ -41,4 +41,23 @@ public class UserService(IUserRepository userRepository) : IUserService
         var result = await userRepository.CreateAsync(newUser);
         return result > 0;
     }
+
+    public async Task<UserDto?> LoginAsync(UserLoginDto loginDto)
+    {
+        var user = await userRepository.GetByUsernameAsync(loginDto.Username);
+
+        if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+        {
+            return null;
+        }
+
+        return new UserDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            Role = user.Role,
+            CreatedAt = user.CreatedAt
+        };
+    }
 }
