@@ -5,7 +5,11 @@ using LOTR_GameRegister.Api.Repositories.Interfaces;
 using LOTR_GameRegister.Api.Services;
 using LOTR_GameRegister.Api.Services.Implementations;
 using LOTR_GameRegister.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Text.Json;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,28 +30,31 @@ builder.Services.AddSwaggerGen(options =>
         Title = "LOTR Game Register API",
         Version = "v1",
         Description = "Specialized API for tracking and analyzing match results from 'The Lord of the Rings: The Card Game'. " +
-                        "It automates game registration, tracks hero performance, and calculates deck statistics. " +
-                        "\n\n" +
-                        "**Source Code:** [https://github.com/adri13moar](https://github.com/adri13moar)",
-        Contact = new()
-        {
-            Name = "Adrián Molina Arroyo",
-            Url = new Uri("https://www.linkedin.com/in/molinaarroyoadrian")
-        },
-        License = new()
-        {
-            Name = "MIT License",
-            Url = new Uri("https://opensource.org/licenses/MIT")
-        }
+                        "It automates game registration, tracks hero performance, and calculates deck statistics."
     });
-
-    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    if (File.Exists(xmlPath))
-    {
-        options.IncludeXmlComments(xmlPath);
-    }
 });
+
+// --- NUEVA SECCIÓN: AUTENTICACIÓN JWT ---
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+    };
+});
+
+builder.Services.AddAuthorization();
 
 // --- SECTIONS 3, 4, 5, 6 (REPOSITORIES AND SERVICES) ---
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -95,7 +102,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
