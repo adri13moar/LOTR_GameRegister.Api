@@ -1,6 +1,5 @@
 ﻿using LOTR_GameRegister.Api.Models;
-using LOTR_GameRegister.Api.Repositories.Implementations;
-using LOTR_GameRegister.Api.Repositories.Interfaces;
+using LOTR_GameRegister.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LOTR_GameRegister.Api.Controllers
@@ -10,9 +9,9 @@ namespace LOTR_GameRegister.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class SpheresController(ISphereRepository sphereRepository) : ControllerBase
+    public class SpheresController(ISphereService sphereService) : ControllerBase
     {
-        private readonly ISphereRepository _sphereRepository = sphereRepository;
+        private readonly ISphereService _sphereService = sphereService;
 
         /// <summary>
         /// Retrieves all spheres.
@@ -23,7 +22,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var spheres = await _sphereRepository.GetAllAsync();
+                var spheres = await _sphereService.GetAllAsync();
                 return Ok(spheres);
             }
             catch (Exception ex)
@@ -42,7 +41,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var sphere = await _sphereRepository.GetByIdAsync(id);
+                var sphere = await _sphereService.GetByIdAsync(id);
                 if (sphere == null)
                 {
                     return NotFound($"Sphere with ID {id} not found.");

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LOTR_GameRegister.Api.Repositories.Implementations;
+using LOTR_GameRegister.Api.Services.Interfaces;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
@@ -8,9 +8,9 @@ namespace LOTR_GameRegister.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class ReasonsForDefeatController(ReasonForDefeatRepository reasonRepository) : ControllerBase
+    public class ReasonsForDefeatController(IReasonForDefeatService reasonService) : ControllerBase
     {
-        private readonly ReasonForDefeatRepository _reasonRepository = reasonRepository;
+        private readonly IReasonForDefeatService _reasonService = reasonService;
 
         /// <summary>
         /// Retrieves all reasons for defeat.
@@ -20,7 +20,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var reasons = await _reasonRepository.GetAllAsync();
+                var reasons = await _reasonService.GetAllAsync();
                 return Ok(reasons);
             }
             catch (Exception ex)
@@ -38,7 +38,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var reason = await _reasonRepository.GetByIdAsync(id);
+                var reason = await _reasonService.GetByIdAsync(id);
 
                 if (reason == null)
                 {

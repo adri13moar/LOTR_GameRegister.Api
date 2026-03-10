@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LOTR_GameRegister.Api.Models;
-using LOTR_GameRegister.Api.Repositories.Implementations;
+using LOTR_GameRegister.Api.Services.Interfaces;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
@@ -9,9 +9,9 @@ namespace LOTR_GameRegister.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class ResultsController(ResultRepository resultRepository) : ControllerBase
+    public class ResultsController(IResultService resultService) : ControllerBase
     {
-        private readonly ResultRepository _resultRepository = resultRepository;
+        private readonly IResultService _resultService = resultService;
 
         /// <summary>
         /// Retrieves all recorded results.
@@ -21,7 +21,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var results = await _resultRepository.GetAllAsync();
+                var results = await _resultService.GetAllAsync();
                 return Ok(results);
             }
             catch (Exception ex)
@@ -39,7 +39,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var result = await _resultRepository.GetByIdAsync(id);
+                var result = await _resultService.GetByIdAsync(id);
                 if (result == null)
                 {
                     return NotFound($"Result with ID {id} not found.");

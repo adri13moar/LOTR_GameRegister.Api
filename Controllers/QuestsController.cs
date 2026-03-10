@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LOTR_GameRegister.Api.Repositories.Implementations;
+using LOTR_GameRegister.Api.Services.Interfaces;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
@@ -8,9 +8,9 @@ namespace LOTR_GameRegister.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class QuestsController(QuestRepository questRepository) : ControllerBase
+    public class QuestsController(IQuestService questService) : ControllerBase
     {
-        private readonly QuestRepository _questRepository = questRepository;
+        private readonly IQuestService _questService = questService;
 
         /// <summary>
         /// Retrieves all quests.
@@ -20,7 +20,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var quests = await _questRepository.GetAllAsync();
+                var quests = await _questService.GetAllAsync();
                 return Ok(quests);
             }
             catch (Exception ex)
@@ -38,7 +38,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var quest = await _questRepository.GetByIdAsync(id);
+                var quest = await _questService.GetByIdAsync(id);
 
                 if (quest == null)
                 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LOTR_GameRegister.Api.Models;
-using LOTR_GameRegister.Api.Repositories.Implementations;
+using LOTR_GameRegister.Api.Services.Interfaces;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
@@ -9,9 +9,9 @@ namespace LOTR_GameRegister.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class CyclesController(CycleRepository cycleRepository) : ControllerBase
+    public class CyclesController(ICycleService cycleService) : ControllerBase
     {
-        private readonly CycleRepository _cycleRepository = cycleRepository;
+        private readonly ICycleService _cycleService = cycleService;
 
         /// <summary>
         /// Retrieves all cycles.
@@ -21,7 +21,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var cycles = await _cycleRepository.GetAllAsync();
+                var cycles = await _cycleService.GetAllAsync();
                 return Ok(cycles);
             }
             catch (Exception ex)
@@ -39,7 +39,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var cycle = await _cycleRepository.GetByIdAsync(id);
+                var cycle = await _cycleService.GetByIdAsync(id);
 
                 if (cycle == null)
                 {

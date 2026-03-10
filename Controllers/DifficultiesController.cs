@@ -1,8 +1,6 @@
-﻿using Dapper;
-using LOTR_GameRegister.Api.Models;
-using LOTR_GameRegister.Api.Repositories.Implementations;
+﻿using LOTR_GameRegister.Api.Models;
+using LOTR_GameRegister.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
@@ -11,9 +9,9 @@ namespace LOTR_GameRegister.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class DifficultiesController(DifficultyRepository difficultyRepository) : ControllerBase
+    public class DifficultiesController(IDifficultyService difficultyService) : ControllerBase
     {
-        private readonly DifficultyRepository _difficultyRepository = difficultyRepository;
+        private readonly IDifficultyService _difficultyService = difficultyService;
 
         /// <summary>
         /// Retrieves all difficulties.
@@ -23,7 +21,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var difficulties = await _difficultyRepository.GetAllAsync();
+                var difficulties = await _difficultyService.GetAllAsync();
                 return Ok(difficulties);
             }
             catch (Exception ex)
@@ -41,7 +39,7 @@ namespace LOTR_GameRegister.Api.Controllers
         {
             try
             {
-                var quest = await _difficultyRepository.GetById(id);
+                var quest = await _difficultyService.GetByIdAsync(id);
 
                 if (quest == null)
                 {
