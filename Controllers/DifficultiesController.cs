@@ -43,7 +43,7 @@ namespace LOTR_GameRegister.Api.Controllers
 
                 if (quest == null)
                 {
-                    return NotFound($"Quest with ID {id} not found.");
+                    return NotFound($"Difficulty with ID {id} not found.");
                 }
 
                 return Ok(quest);

@@ -37,7 +37,7 @@ namespace LOTR_GameRegister.Api.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var game = await _gameService.GetGameByIdAsync(id);
-            if (game == null) return NotFound($"No se encontró la partida con ID {id}");
+            if (game == null) return NotFound($"Game with ID {id} not found.");
 
             return Ok(game);
         }
@@ -50,7 +50,7 @@ namespace LOTR_GameRegister.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Game game)
         {
-            if (game == null) return BadRequest("Los datos de la partida son nulos.");
+            if (game == null) return BadRequest("Game data is null.");
 
             var newId = await _gameService.CreateGameAsync(game);
             var createdGame = await _gameService.GetGameByIdAsync(newId);
@@ -67,7 +67,7 @@ namespace LOTR_GameRegister.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Game game)
         {
-            if (id != game.Id) return BadRequest("El ID de la URL no coincide con el ID del cuerpo.");
+            if (id != game.Id) return BadRequest("The URL ID does not match the body ID.");
 
             var success = await _gameService.UpdateGameAsync(game);
             if (!success) return NotFound();
