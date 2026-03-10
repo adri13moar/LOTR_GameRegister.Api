@@ -59,7 +59,15 @@ builder.Services.AddScoped<IQuestRepository, QuestRepository>();
 builder.Services.AddScoped<IReasonForDefeatRepository, ReasonForDefeatRepository>();
 builder.Services.AddScoped<IResultRepository, ResultRepository>();
 builder.Services.AddScoped<ISphereRepository, SphereRepository>();
+
+builder.Services.AddScoped<ICycleService, CycleService>();
+builder.Services.AddScoped<IDifficultyService, DifficultyService>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IHeroService, HeroService>();
+builder.Services.AddScoped<IQuestService, QuestService>();
+builder.Services.AddScoped<IReasonForDefeatService, ReasonForDefeatService>();
+builder.Services.AddScoped<IResultService, ResultService>();
+builder.Services.AddScoped<ISphereService, SphereService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddCors(options =>

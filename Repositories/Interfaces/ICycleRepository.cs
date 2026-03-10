@@ -1,6 +1,6 @@
 ﻿using LOTR_GameRegister.Api.Models.Entities;
 
-namespace LOTR_GameRegister.Api.Repositories.Implementations
+namespace LOTR_GameRegister.Api.Repositories.Interfaces
 {
     public interface ICycleRepository
     {
