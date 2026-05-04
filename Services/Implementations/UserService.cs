@@ -46,7 +46,7 @@ public class UserService(IUserRepository userRepository, IConfiguration config) 
         return result > 0;
     }
 
-    public async Task<AuthResponseDto?> LoginAsync(UserLoginDto loginDto)
+    public async Task<AuthenticationResponseDto?> LoginAsync(UserLoginDto loginDto)
     {
         var user = await userRepository.GetByUsernameAsync(loginDto.Username);
 
@@ -57,7 +57,7 @@ public class UserService(IUserRepository userRepository, IConfiguration config) 
 
         var token = GenerateJwtToken(user);
 
-        return new AuthResponseDto
+        return new AuthenticationResponseDto
         {
             User = new UserDto
             {
@@ -88,7 +88,7 @@ public class UserService(IUserRepository userRepository, IConfiguration config) 
             issuer: config["Jwt:Issuer"],
             audience: config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(double.Parse(config["Jwt:DurationInMinutes"]!)),
+            expires: DateTime.UtcNow.AddMinutes(double.Parse(config["Jwt:DurationInMinutes"]!)),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

@@ -6,6 +6,6 @@ namespace LOTR_GameRegister.Api.Services.Interfaces
     {
         Task<IEnumerable<UserDto>> GetAllUsersAsync();
         Task<bool> RegisterAsync(UserRegistrationDto registrationDto);
-        Task<AuthResponseDto?> LoginAsync(UserLoginDto loginDto);
+        Task<AuthenticationResponseDto?> LoginAsync(UserLoginDto loginDto);
     }
 }
