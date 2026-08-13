@@ -1,15 +1,15 @@
-using Dapper;
 using LOTR_GameRegister.Api.Helpers;
-using LOTR_GameRegister.Api.Repositories.Implementations;
-using LOTR_GameRegister.Api.Repositories.Interfaces;
-using LOTR_GameRegister.Api.Services;
-using LOTR_GameRegister.Api.Services.Implementations;
-using LOTR_GameRegister.Api.Services.Interfaces;
+using LOTR_GameRegister.Application;
+using LOTR_GameRegister.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
-
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +21,11 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
 
-// --- SECTION 2: API DOCUMENTATION ---
+// --- SECTION 2: ERROR HANDLING ---
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+
+// --- SECTION 3: API DOCUMENTATION ---
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -32,9 +36,35 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Specialized API for tracking and analyzing match results from 'The Lord of the Rings: The Card Game'. " +
                         "It automates game registration, tracks hero performance, and calculates deck statistics."
     });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' followed by a space and your JWT token."
+    });
+
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecuritySchemeReference("Bearer", document, null),
+            []
+        }
+    });
 });
 
-// --- NUEVA SECCIÓN: AUTENTICACIÓN JWT ---
+// --- SECTION 4: AUTHENTICATION JWT ---
+var jwtKey = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrWhiteSpace(jwtKey))
+{
+    throw new InvalidOperationException(
+        "JWT signing key ('Jwt:Key') is not configured. Set it via 'dotnet user-secrets' (local development) " +
+        "or the Jwt__Key environment variable (Docker).");
+}
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -50,45 +80,54 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
 });
 
 builder.Services.AddAuthorization();
 
-// --- SECTIONS 3, 4, 5, 6 (REPOSITORIES AND SERVICES) ---
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ICycleRepository, CycleRepository>();
-builder.Services.AddScoped<IDifficultyRepository, DifficultyRepository>();
-builder.Services.AddScoped<IGameRepository, GameRepository>();
-builder.Services.AddScoped<IHeroRepository, HeroRepository>();
-builder.Services.AddScoped<IQuestRepository, QuestRepository>();
-builder.Services.AddScoped<IReasonForDefeatRepository, ReasonForDefeatRepository>();
-builder.Services.AddScoped<IResultRepository, ResultRepository>();
-builder.Services.AddScoped<ISphereRepository, SphereRepository>();
-
-builder.Services.AddScoped<ICycleService, CycleService>();
-builder.Services.AddScoped<IDifficultyService, DifficultyService>();
-builder.Services.AddScoped<IGameService, GameService>();
-builder.Services.AddScoped<IHeroService, HeroService>();
-builder.Services.AddScoped<IQuestService, QuestService>();
-builder.Services.AddScoped<IReasonForDefeatService, ReasonForDefeatService>();
-builder.Services.AddScoped<IResultService, ResultService>();
-builder.Services.AddScoped<ISphereService, SphereService>();
-builder.Services.AddScoped<IUserService, UserService>();
-
-builder.Services.AddCors(options =>
+// --- SECTION 5: RATE LIMITING ---
+builder.Services.AddRateLimiter(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddFixedWindowLimiter("auth_limiter", limiterOptions =>
     {
-        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        limiterOptions.PermitLimit = 10;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueLimit = 0;
+        limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
     });
 });
 
-SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
+// --- SECTION 6: LAYER DI REGISTRATIONS ---
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
 
-// --- SECTION 7: MIDDLEWARE ---
+// --- SECTION 7: CORS ---
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+if (allowedOrigins is { Length: > 0 })
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("CorsPolicy", policy =>
+            policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod());
+    });
+}
+
+// --- SECTION 8: LOCALIZATION ---
+builder.Services.AddLocalization();
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { new CultureInfo("en"), new CultureInfo("es") };
+    options.DefaultRequestCulture = new RequestCulture("en");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+
+// --- SECTION 9: MIDDLEWARE ---
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
@@ -101,8 +140,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+app.UseRequestLocalization();
 
+if (allowedOrigins is { Length: > 0 })
+{
+    app.UseCors("CorsPolicy");
+}
+
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 

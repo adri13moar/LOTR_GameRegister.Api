@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GameNotFound" xml:space="preserve">
+    <value>Game with ID {0} not found.</value>
+  </data>
+  <data name="CycleNotFound" xml:space="preserve">
+    <value>Cycle with ID {0} not found.</value>
+  </data>
+  <data name="QuestNotFound" xml:space="preserve">
+    <value>Quest with ID {0} not found.</value>
+  </data>
+  <data name="DifficultyNotFound" xml:space="preserve">
+    <value>Difficulty with ID {0} not found.</value>
+  </data>
+  <data name="HeroNotFound" xml:space="preserve">
+    <value>Hero with ID {0} not found.</value>
+  </data>
+  <data name="ResultNotFound" xml:space="preserve">
+    <value>Result with ID {0} not found.</value>
+  </data>
+  <data name="ReasonForDefeatNotFound" xml:space="preserve">
+    <value>Reason for defeat with ID {0} not found.</value>
+  </data>
+  <data name="SphereNotFound" xml:space="preserve">
+    <value>Sphere with ID {0} not found.</value>
+  </data>
+  <data name="IdMismatch" xml:space="preserve">
+    <value>The URL ID does not match the body ID.</value>
+  </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Invalid username or password.</value>
+  </data>
+  <data name="UsernameOrEmailTaken" xml:space="preserve">
+    <value>Username or Email is already in use.</value>
+  </data>
+  <data name="UserRegistered" xml:space="preserve">
+    <value>User registered successfully.</value>
+  </data>
+</root>

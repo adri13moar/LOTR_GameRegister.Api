@@ -21,6 +21,7 @@ IF OBJECT_ID('dbo.Spheres', 'U') IS NOT NULL DROP TABLE dbo.Spheres;
 IF OBJECT_ID('dbo.Results', 'U') IS NOT NULL DROP TABLE dbo.Results;
 IF OBJECT_ID('dbo.Difficulties', 'U') IS NOT NULL DROP TABLE dbo.Difficulties;
 IF OBJECT_ID('dbo.ReasonsForDefeat', 'U') IS NOT NULL DROP TABLE dbo.ReasonsForDefeat;
+IF OBJECT_ID('dbo.Users', 'U') IS NOT NULL DROP TABLE dbo.Users;
 
 -- 2. CREATE SCHEMA (Removed IDENTITY to use your Excel IDs)
 CREATE TABLE [Spheres] (
@@ -82,6 +83,22 @@ CREATE TABLE [Games] (
     [ResultId] INT FOREIGN KEY REFERENCES [Results](Id),
     [ReasonForDefeatId] INT FOREIGN KEY REFERENCES [ReasonsForDefeat](Id) NULL,
     [Notes] NVARCHAR(MAX) NULL
+);
+
+CREATE TABLE [GameHeroes] (
+    [GameId] INT NOT NULL FOREIGN KEY REFERENCES [Games](Id),
+    [HeroId] INT NOT NULL FOREIGN KEY REFERENCES [Heroes](Id),
+    [IsDead] BIT NOT NULL,
+    PRIMARY KEY ([GameId], [HeroId])
+);
+
+CREATE TABLE [Users] (
+    [Id] INT PRIMARY KEY IDENTITY(1,1),
+    [Username] NVARCHAR(100) NOT NULL UNIQUE,
+    [Email] NVARCHAR(200) NOT NULL UNIQUE,
+    [PasswordHash] NVARCHAR(MAX) NOT NULL,
+    [Role] NVARCHAR(20) NOT NULL DEFAULT 'Player',
+    [CreatedAt] DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
 );
 
 -- 3. INSERT SEED DATA (Standardizing IDs with your Excel)

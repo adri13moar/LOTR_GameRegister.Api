@@ -1,5 +1,5 @@
-﻿using LOTR_GameRegister.Api.Models;
-using LOTR_GameRegister.Api.Services.Interfaces;
+using LOTR_GameRegister.Api.Helpers;
+using LOTR_GameRegister.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LOTR_GameRegister.Api.Controllers
@@ -20,15 +20,8 @@ namespace LOTR_GameRegister.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var spheres = await _sphereService.GetAllAsync();
-                return Ok(spheres);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
+            var spheres = await _sphereService.GetAllAsync();
+            return Ok(spheres);
         }
 
         /// <summary>
@@ -39,20 +32,13 @@ namespace LOTR_GameRegister.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
+            var sphere = await _sphereService.GetByIdAsync(id);
+            if (sphere == null)
             {
-                var sphere = await _sphereService.GetByIdAsync(id);
-                if (sphere == null)
-                {
-                    return NotFound($"Sphere with ID {id} not found.");
-                }
+                return NotFound(Localizer.Get("SphereNotFound", id));
+            }
 
-                return Ok(sphere);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
+            return Ok(sphere);
         }
     }
 }

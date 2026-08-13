@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LOTR_GameRegister.Api.Models;
-using LOTR_GameRegister.Api.Services.Interfaces;
+﻿using LOTR_GameRegister.Api.Helpers;
+using LOTR_GameRegister.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
@@ -19,15 +19,8 @@ namespace LOTR_GameRegister.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var heroes = await _heroService.GetAllAsync();
-                return Ok(heroes);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
+            var heroes = await _heroService.GetAllAsync();
+            return Ok(heroes);
         }
 
         /// <summary>
@@ -37,21 +30,14 @@ namespace LOTR_GameRegister.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var hero = await _heroService.GetByIdAsync(id);
+            var hero = await _heroService.GetByIdAsync(id);
 
-                if (hero == null)
-                {
-                    return NotFound($"Hero with ID {id} not found.");
-                }
-
-                return Ok(hero);
-            }
-            catch (Exception ex)
+            if (hero == null)
             {
-                return StatusCode(500, $"Internal error: {ex.Message}");
+                return NotFound(Localizer.Get("HeroNotFound", id));
             }
+
+            return Ok(hero);
         }
     }
 }

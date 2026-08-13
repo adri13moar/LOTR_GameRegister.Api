@@ -1,5 +1,7 @@
-﻿using LOTR_GameRegister.Api.Models.Entities;
-using LOTR_GameRegister.Api.Services.Interfaces;
+﻿using LOTR_GameRegister.Api.Helpers;
+using LOTR_GameRegister.Application.Models.Dto;
+using LOTR_GameRegister.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LOTR_GameRegister.Api.Controllers
@@ -9,23 +11,16 @@ namespace LOTR_GameRegister.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class GamesController : ControllerBase
+    [Authorize]
+    public class GamesController(IGameService gameService) : ControllerBase
     {
-        private readonly IGameService _gameService;
-
-        public GamesController(IGameService gameService)
-        {
-            _gameService = gameService;
-        }
-
-
         /// <summary>
         /// Retrieves all game records.
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var games = await _gameService.GetAllGamesAsync();
+            var games = await gameService.GetAllGamesAsync();
             return Ok(games);
         }
 
@@ -36,40 +31,36 @@ namespace LOTR_GameRegister.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var game = await _gameService.GetGameByIdAsync(id);
-            if (game == null) return NotFound($"Game with ID {id} not found.");
+            var game = await gameService.GetGameByIdAsync(id);
+            if (game == null) return NotFound(Localizer.Get("GameNotFound", id));
 
             return Ok(game);
         }
 
-
         /// <summary>
         /// Creates a new game record.
         /// </summary>
-        /// <param name="game">Game payload.</param>
+        /// <param name="dto">Game payload.</param>
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Game game)
+        public async Task<IActionResult> Create([FromBody] CreateGameDto dto)
         {
-            if (game == null) return BadRequest("Game data is null.");
-
-            var newId = await _gameService.CreateGameAsync(game);
-            var createdGame = await _gameService.GetGameByIdAsync(newId);
+            var newId = await gameService.CreateGameAsync(dto);
+            var createdGame = await gameService.GetGameByIdAsync(newId);
 
             return CreatedAtAction(nameof(GetById), new { id = newId }, createdGame);
         }
-
 
         /// <summary>
         /// Updates an existing game.
         /// </summary>
         /// <param name="id">Identifier of the game to update.</param>
-        /// <param name="game">Updated game object.</param>
+        /// <param name="dto">Updated game object.</param>
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Game game)
+        public async Task<IActionResult> Update(int id, [FromBody] GameDto dto)
         {
-            if (id != game.Id) return BadRequest("The URL ID does not match the body ID.");
+            if (id != dto.Id) return BadRequest(Localizer.Get("IdMismatch"));
 
-            var success = await _gameService.UpdateGameAsync(game);
+            var success = await gameService.UpdateGameAsync(dto);
             if (!success) return NotFound();
 
             return NoContent();
@@ -82,7 +73,7 @@ namespace LOTR_GameRegister.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var success = await _gameService.DeleteGameAsync(id);
+            var success = await gameService.DeleteGameAsync(id);
             if (!success) return NotFound();
 
             return NoContent();

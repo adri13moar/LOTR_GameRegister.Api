@@ -1,6 +1,103 @@
 @LOTR_GameRegister.Api_HostAddress = http://localhost:5130
 
-GET {{LOTR_GameRegister.Api_HostAddress}}/weatherforecast/
+### Register a new user
+# @name register
+POST {{LOTR_GameRegister.Api_HostAddress}}/api/authentication/register
+Accept: application/json
+Content-Type: application/json
+
+{
+  "username": "aragorn",
+  "email": "aragorn@gondor.test",
+  "password": "Anduril123!"
+}
+
+### Login and capture the JWT token
+# @name login
+POST {{LOTR_GameRegister.Api_HostAddress}}/api/authentication/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "username": "aragorn",
+  "password": "Anduril123!"
+}
+
+> {%
+    client.global.set("auth_token", response.body.token);
+%}
+
+### List all games (requires authentication)
+GET {{LOTR_GameRegister.Api_HostAddress}}/api/games
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Create a game (requires authentication)
+POST {{LOTR_GameRegister.Api_HostAddress}}/api/games
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "questId": 1,
+  "difficultyId": 2,
+  "resultId": 1,
+  "heroes": [
+    { "heroId": 1, "isDead": false },
+    { "heroId": 2, "isDead": true }
+  ]
+}
+
+### Get a game by id (requires authentication)
+GET {{LOTR_GameRegister.Api_HostAddress}}/api/games/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Update a game (requires authentication)
+PUT {{LOTR_GameRegister.Api_HostAddress}}/api/games/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id": 1,
+  "questId": 1,
+  "difficultyId": 1,
+  "resultId": 2,
+  "heroes": [
+    { "heroId": 1, "isDead": false }
+  ]
+}
+
+### Delete a game (requires authentication)
+DELETE {{LOTR_GameRegister.Api_HostAddress}}/api/games/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### List cycles (public)
+GET {{LOTR_GameRegister.Api_HostAddress}}/api/cycles
 Accept: application/json
 
-###
+### List quests (public)
+GET {{LOTR_GameRegister.Api_HostAddress}}/api/quests
+Accept: application/json
+
+### List heroes (public)
+GET {{LOTR_GameRegister.Api_HostAddress}}/api/heroes
+Accept: application/json
+
+### List spheres (public)
+GET {{LOTR_GameRegister.Api_HostAddress}}/api/spheres
+Accept: application/json
+
+### List results (public)
+GET {{LOTR_GameRegister.Api_HostAddress}}/api/results
+Accept: application/json
+
+### List reasons for defeat (public)
+GET {{LOTR_GameRegister.Api_HostAddress}}/api/reasonsfordefeat
+Accept: application/json
+
+### List difficulties (public)
+GET {{LOTR_GameRegister.Api_HostAddress}}/api/difficulties
+Accept: application/json

@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LOTR_GameRegister.Api.Services.Interfaces;
+﻿using LOTR_GameRegister.Api.Helpers;
+using LOTR_GameRegister.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
@@ -18,15 +19,8 @@ namespace LOTR_GameRegister.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var quests = await _questService.GetAllAsync();
-                return Ok(quests);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
+            var quests = await _questService.GetAllAsync();
+            return Ok(quests);
         }
 
         /// <summary>
@@ -36,21 +30,14 @@ namespace LOTR_GameRegister.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var quest = await _questService.GetByIdAsync(id);
+            var quest = await _questService.GetByIdAsync(id);
 
-                if (quest == null)
-                {
-                    return NotFound($"Quest with ID {id} not found.");
-                }
-
-                return Ok(quest);
-            }
-            catch (Exception ex)
+            if (quest == null)
             {
-                return StatusCode(500, $"Internal error: {ex.Message}");
+                return NotFound(Localizer.Get("QuestNotFound", id));
             }
+
+            return Ok(quest);
         }
     }
 }

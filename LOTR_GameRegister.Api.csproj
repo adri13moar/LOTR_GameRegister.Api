@@ -1,20 +1,46 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);1591</NoWarn>
+    <UserSecretsId>de5c458b-bc3e-4061-a255-c70255d7038d</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-      <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
-      <PackageReference Include="Dapper" Version="2.1.66" />
+    <EmbeddedResource Update="Resources/Messages.resx">
+      <LogicalName>LOTR_GameRegister.Api.Resources.Messages</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources/Messages.es.resx">
+      <LogicalName>LOTR_GameRegister.Api.Resources.Messages.es</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
-      <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
-      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.16.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.4" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="LOTR_GameRegister.Application\**" />
+    <Compile Remove="LOTR_GameRegister.Domain\**" />
+    <Compile Remove="LOTR_GameRegister.Infrastructure\**" />
+    <Compile Remove="LOTR_GameRegister.Api.Tests\**" />
+    <Content Remove="LOTR_GameRegister.Application\**" />
+    <Content Remove="LOTR_GameRegister.Domain\**" />
+    <Content Remove="LOTR_GameRegister.Infrastructure\**" />
+    <Content Remove="LOTR_GameRegister.Api.Tests\**" />
+    <None Remove="LOTR_GameRegister.Application\**" />
+    <None Remove="LOTR_GameRegister.Domain\**" />
+    <None Remove="LOTR_GameRegister.Infrastructure\**" />
+    <None Remove="LOTR_GameRegister.Api.Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="LOTR_GameRegister.Application/LOTR_GameRegister.Application.csproj" />
+    <ProjectReference Include="LOTR_GameRegister.Infrastructure/LOTR_GameRegister.Infrastructure.csproj" />
+    <ProjectReference Include="LOTR_GameRegister.Domain/LOTR_GameRegister.Domain.csproj" />
   </ItemGroup>
 
 </Project>

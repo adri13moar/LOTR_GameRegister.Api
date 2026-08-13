@@ -1,3 +1,7 @@
 <Solution>
   <Project Path="LOTR_GameRegister.Api.csproj" />
+  <Project Path="LOTR_GameRegister.Application/LOTR_GameRegister.Application.csproj" />
+  <Project Path="LOTR_GameRegister.Domain/LOTR_GameRegister.Domain.csproj" />
+  <Project Path="LOTR_GameRegister.Infrastructure/LOTR_GameRegister.Infrastructure.csproj" />
+  <Project Path="LOTR_GameRegister.Api.Tests/LOTR_GameRegister.Api.Tests.csproj" />
 </Solution>

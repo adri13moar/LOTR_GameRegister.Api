@@ -4,11 +4,11 @@ services:
     container_name: lotr_db
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=TuPasswordSeguro123! # Keep this consistent with appsettings.json
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .env}
     ports:
       - "1433:1433"
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "TuPasswordSeguro123!", "-Q", "SELECT 1"]
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .env}", "-Q", "SELECT 1"]
       interval: 10s
       timeout: 3s
       retries: 10
@@ -24,4 +24,5 @@ services:
       db:
         condition: service_healthy # Wait for database to be ready
     environment:
-      - ConnectionStrings__DefaultConnection=Server=db;Database=LOTR_GameRegister;User Id=sa;Password=TuPasswordSeguro123!;TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=db;Database=LOTR_GameRegister;User Id=sa;Password=${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .env};TrustServerCertificate=True;
+      - Jwt__Key=${JWT_KEY:?Set JWT_KEY in .env}

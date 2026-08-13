@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LOTR_GameRegister.Api.Models.Dto;
-using LOTR_GameRegister.Api.Services.Interfaces;
+﻿using LOTR_GameRegister.Api.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using LOTR_GameRegister.Application.Models;
+using LOTR_GameRegister.Application.Models.Dto;
+using LOTR_GameRegister.Application.Services.Interfaces;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
@@ -9,6 +12,7 @@ namespace LOTR_GameRegister.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UsersController(IUserService userService) : ControllerBase
     {
 
@@ -16,17 +20,11 @@ namespace LOTR_GameRegister.Api.Controllers
         /// Retrieves all users.
         /// </summary>
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var users = await userService.GetAllUsersAsync();
-                return Ok(users);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
+            var users = await userService.GetAllUsersAsync();
+            return Ok(users);
         }
 
         /// <summary>
@@ -34,23 +32,17 @@ namespace LOTR_GameRegister.Api.Controllers
         /// </summary>
         /// <param name="userRegistrationDto">User registration data.</param>
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDto userRegistrationDto)
         {
-            try
-            {
-                var result = await userService.RegisterAsync(userRegistrationDto);
+            var result = await userService.RegisterAsync(userRegistrationDto);
 
-                if (!result)
-                {
-                    return BadRequest("Username or Email is already in use.");
-                }
-
-                return Ok("User registered successfully.");
-            }
-            catch (Exception ex)
+            if (result != RegisterResult.Success)
             {
-                return StatusCode(500, $"Internal error: {ex.Message}");
+                return BadRequest(Localizer.Get("UsernameOrEmailTaken"));
             }
+
+            return Ok(Localizer.Get("UserRegistered"));
         }
 
         /// <summary>
@@ -58,23 +50,17 @@ namespace LOTR_GameRegister.Api.Controllers
         /// </summary>
         /// <param name="loginDto">User credentials.</param>
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserLoginDto loginDto)
         {
-            try
-            {
-                var authResponse = await userService.LoginAsync(loginDto);
+            var authResponse = await userService.LoginAsync(loginDto);
 
-                if (authResponse == null)
-                {
-                    return Unauthorized("Invalid username or password.");
-                }
-
-                return Ok(authResponse);
-            }
-            catch (Exception ex)
+            if (authResponse == null)
             {
-                return StatusCode(500, $"Internal error: {ex.Message}");
+                return Unauthorized(Localizer.Get("InvalidCredentials"));
             }
+
+            return Ok(authResponse);
         }
     }
 }

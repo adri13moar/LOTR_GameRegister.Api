@@ -19,6 +19,9 @@
 - **Dockerized Environment** — Instant setup via Docker Compose for both SQL Server and the API
 - **Advanced Analytics** — Ready for complex queries (e.g., win rates per hero or sphere)
 - **Swagger Documentation** — Interactive API documentation out of the box
+- **JWT Authentication** — Secure login/register with role-based authorization (Admin) and login rate limiting
+- **Localization** — User-facing messages served in English or Spanish via the `Accept-Language` header
+- **Unit Tests** — MSTest suite covering the service layer (13 tests)
 
 ### 🛠️ Tech Stack
 
@@ -26,25 +29,53 @@
 |-----------|-----------|
 | **Backend** | ASP.NET Core Web API (.NET 10) |
 | **Database** | Microsoft SQL Server 2022 |
+| **Data Access** | Dapper (raw SQL, no EF Core) |
+| **Auth** | JWT (Bearer) + BCrypt password hashing |
 | **Infrastructure** | Docker & Docker Compose |
-| **ORM** | Entity Framework Core |
+| **Testing** | MSTest + Moq + FluentAssertions |
 
 ### 📦 Quick Start
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/adri13moar/LOTR_GameRegister.Api.git
-   cd LOTR_GameRegister.Api
-   ```
+#### Option A — Docker (SQL Server only, recommended for the DB)
 
-2. **Start the application**
-   ```bash
-   docker-compose up -d
-   ```
+The `api` Docker build target is not fully wired up yet, so the simplest path is to
+run **only the database** with Docker and the API with `dotnet run`:
 
-3. **Access the API**
-   - Swagger UI: https://localhost:7052/swagger
-   - API Base URL: https://localhost:7052
+```bash
+# 1. Create the secrets file (once)
+cp .env.example .env          # then edit the values
+
+# 2. Start SQL Server (initializes schema + seed data)
+docker compose up -d db
+
+# 3. Configure the API connection string + JWT key (local development)
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=LOTR_GameRegister;User Id=sa;Password=<YOUR_SA_PASSWORD>;TrustServerCertificate=True;"
+dotnet user-secrets set "Jwt:Key" "<A_RANDOM_SECRET_AT_LEAST_32_CHARS>"
+
+# 4. Run the API
+dotnet run
+```
+
+> The database container runs `init.sql` automatically on first start (it drops and
+> recreates all tables). To re-seed, remove the volume and start again.
+
+#### Option B — Without Docker
+
+You need a running SQL Server 2022 instance. Run `init.sql` against it, then follow
+steps 3–4 above.
+
+#### Access the API
+
+- Swagger UI: http://localhost:5130 (Development)
+- HTTPS: https://localhost:7052
+- API Base URL: http://localhost:5130
+
+#### Authentication
+
+1. `POST /api/authentication/register` with `{ "username", "email", "password" }`.
+2. `POST /api/authentication/login` with `{ "username", "password" }` → returns a JWT.
+3. Call protected endpoints (e.g. `/api/games`) with header `Authorization: Bearer <token>`.
 
 ### 📊 Data Insights (SQL Example)
 
@@ -66,8 +97,9 @@ ORDER BY MatchesPlayed DESC;
 - [x] Requirement documentation and DB Schema design
 - [x] SQL initialization script (`init.sql`)
 - [x] Docker Compose configuration
-- [ ] Unit Testing implementation
+- [x] Unit Testing implementation
 - [ ] Advanced Statistics Dashboard endpoint
+- [ ] Command Handler pattern + Semantic Kernel integration
 
 ---
 
@@ -84,6 +116,9 @@ ORDER BY MatchesPlayed DESC;
 - **Contenedorización** — Despliegue inmediato mediante Docker, garantizando un entorno consistente
 - **Relaciones Complejas** — Implementación de relaciones Many-to-Many entre Partidas y Héroes
 - **Documentación Swagger** — Documentación interactiva de la API lista para usar
+- **Autenticación JWT** — Login/registro seguro con autorización por roles (Admin) y limitación de intentos de login
+- **Localización** — Mensajes de usuario en inglés o español según la cabecera `Accept-Language`
+- **Tests Unitarios** — Suite MSTest para la capa de servicios (13 tests)
 
 ### 🛠️ Stack Tecnológico
 
@@ -91,25 +126,54 @@ ORDER BY MatchesPlayed DESC;
 |-----------|-----------|
 | **Backend** | ASP.NET Core Web API (.NET 10) |
 | **Base de Datos** | Microsoft SQL Server 2022 |
+| **Acceso a Datos** | Dapper (SQL directo, sin EF Core) |
+| **Autenticación** | JWT (Bearer) + hash de contraseñas BCrypt |
 | **Infraestructura** | Docker & Docker Compose |
-| **ORM** | Entity Framework Core |
+| **Testing** | MSTest + Moq + FluentAssertions |
 
 ### 📦 Inicio Rápido
 
-1. **Clona el repositorio**
-   ```bash
-   git clone https://github.com/adri13moar/LOTR_GameRegister.Api.git
-   cd LOTR_GameRegister.Api
-   ```
+#### Opción A — Docker (solo SQL Server, recomendado para la BD)
 
-2. **Inicia la aplicación**
-   ```bash
-   docker-compose up -d
-   ```
+El target de build Docker de la API aún no está completamente configurado, así que la
+vía más simple es ejecutar **solo la base de datos** con Docker y la API con `dotnet run`:
 
-3. **Accede a la API**
-   - Swagger UI: https://localhost:7052/swagger
-   - URL Base de la API: https://localhost:7052
+```bash
+# 1. Crea el archivo de secretos (una vez)
+cp .env.example .env          # y edita los valores
+
+# 2. Inicia SQL Server (inicializa esquema + datos de seed)
+docker compose up -d db
+
+# 3. Configura la cadena de conexión y la clave JWT (desarrollo local)
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=LOTR_GameRegister;User Id=sa;Password=<TU_PASSWORD_SA>;TrustServerCertificate=True;"
+dotnet user-secrets set "Jwt:Key" "<UN_SECRETO_ALEATORIO_DE_AL_MENOS_32_CARACTERES>"
+
+# 4. Ejecuta la API
+dotnet run
+```
+
+> El contenedor de la base de datos ejecuta `init.sql` automáticamente en el primer
+> arranque (borra y recrea todas las tablas). Para volver a sembrar, elimina el
+> volumen y vuelve a iniciar.
+
+#### Opción B — Sin Docker
+
+Necesitas una instancia de SQL Server 2022 en ejecución. Ejecuta `init.sql` contra ella
+y sigue los pasos 3–4 anteriores.
+
+#### Acceso a la API
+
+- Swagger UI: http://localhost:5130 (Development)
+- HTTPS: https://localhost:7052
+- URL Base de la API: http://localhost:5130
+
+#### Autenticación
+
+1. `POST /api/authentication/register` con `{ "username", "email", "password" }`.
+2. `POST /api/authentication/login` con `{ "username", "password" }` → devuelve un JWT.
+3. Llama a los endpoints protegidos (p. ej. `/api/games`) con la cabecera `Authorization: Bearer <token>`.
 
 ### 📊 Ejemplo de Consulta (SQL)
 
@@ -131,8 +195,9 @@ ORDER BY PartidasJugadas DESC;
 - [x] Documentación de requisitos y diseño de BD
 - [x] Script de inicialización SQL (`init.sql`)
 - [x] Configuración de Docker Compose
-- [ ] Implementación de Unit Testing
+- [x] Implementación de Unit Testing
 - [ ] Dashboard de estadísticas avanzado
+- [ ] Patrón Command Handler + integración con Semantic Kernel
 
 ---
 

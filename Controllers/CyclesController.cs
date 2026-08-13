@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using LOTR_GameRegister.Api.Models;
-using LOTR_GameRegister.Api.Services.Interfaces;
+﻿using LOTR_GameRegister.Api.Helpers;
+using LOTR_GameRegister.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LOTR_GameRegister.Api.Controllers
 {
@@ -16,18 +16,11 @@ namespace LOTR_GameRegister.Api.Controllers
         /// <summary>
         /// Retrieves all cycles.
         /// </summary>
-        [HttpGet]        
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var cycles = await _cycleService.GetAllAsync();
-                return Ok(cycles);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal error: {ex.Message}");
-            }
+            var cycles = await _cycleService.GetAllAsync();
+            return Ok(cycles);
         }
 
         /// <summary>
@@ -37,21 +30,14 @@ namespace LOTR_GameRegister.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var cycle = await _cycleService.GetByIdAsync(id);
+            var cycle = await _cycleService.GetByIdAsync(id);
 
-                if (cycle == null)
-                {
-                    return NotFound($"Cycle with ID {id} not found.");
-                }
-
-                return Ok(cycle);
-            }
-            catch (Exception ex)
+            if (cycle == null)
             {
-                return StatusCode(500, $"Internal error: {ex.Message}");
+                return NotFound(Localizer.Get("CycleNotFound", id));
             }
+
+            return Ok(cycle);
         }
     }
 }
