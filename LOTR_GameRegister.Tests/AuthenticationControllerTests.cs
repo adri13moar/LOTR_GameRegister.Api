@@ -7,20 +7,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace LOTR_GameRegister.Api.Tests;
+namespace LOTR_GameRegister.Tests;
 
 [TestClass]
-public class UsersControllerTests
+public class AuthenticationControllerTests
 {
     private readonly Mock<IUserService> _service = new();
 
-    private UsersController CreateController() => new(_service.Object);
+    private AuthenticationController CreateController() => new(_service.Object);
 
     private static AuthenticationResponseDto CreateResponse() => new()
     {
         Token = "jwt-token",
         User = new UserDto { Id = 1, Username = "aragorn", Email = "aragorn@gondor.test", Role = "Player" }
     };
+
+    private static UserLoginDto CreateLogin() => new() { Username = "aragorn", Password = "Anduril123!" };
 
     private static UserRegistrationDto CreateRegistration() => new()
     {
@@ -30,17 +32,24 @@ public class UsersControllerTests
     };
 
     [TestMethod]
-    public async Task GetAll_ReturnsOkWithUsers()
+    public async Task Login_WithValidCredentials_ReturnsOkWithResponse()
     {
-        var users = new List<UserDto>
-        {
-            new() { Id = 1, Username = "aragorn", Email = "aragorn@gondor.test", Role = "Admin" }
-        };
-        _service.Setup(s => s.GetAllUsersAsync()).ReturnsAsync(users);
+        var response = CreateResponse();
+        _service.Setup(s => s.LoginAsync(It.IsAny<UserLoginDto>())).ReturnsAsync(response);
 
-        var result = await CreateController().GetAll();
+        var result = await CreateController().Login(CreateLogin());
 
-        result.Should().BeOfType<OkObjectResult>().Which.Value.Should().BeSameAs(users);
+        result.Should().BeOfType<OkObjectResult>().Which.Value.Should().BeSameAs(response);
+    }
+
+    [TestMethod]
+    public async Task Login_WithInvalidCredentials_ReturnsUnauthorized()
+    {
+        _service.Setup(s => s.LoginAsync(It.IsAny<UserLoginDto>())).ReturnsAsync((AuthenticationResponseDto?)null);
+
+        var result = await CreateController().Login(CreateLogin());
+
+        result.Should().BeOfType<UnauthorizedObjectResult>();
     }
 
     [TestMethod]
@@ -62,26 +71,5 @@ public class UsersControllerTests
         var result = await CreateController().Register(CreateRegistration());
 
         result.Should().BeOfType<BadRequestObjectResult>();
-    }
-
-    [TestMethod]
-    public async Task Login_WithValidCredentials_ReturnsOkWithResponse()
-    {
-        var response = CreateResponse();
-        _service.Setup(s => s.LoginAsync(It.IsAny<UserLoginDto>())).ReturnsAsync(response);
-
-        var result = await CreateController().Login(new UserLoginDto { Username = "aragorn", Password = "Anduril123!" });
-
-        result.Should().BeOfType<OkObjectResult>().Which.Value.Should().BeSameAs(response);
-    }
-
-    [TestMethod]
-    public async Task Login_WithInvalidCredentials_ReturnsUnauthorized()
-    {
-        _service.Setup(s => s.LoginAsync(It.IsAny<UserLoginDto>())).ReturnsAsync((AuthenticationResponseDto?)null);
-
-        var result = await CreateController().Login(new UserLoginDto { Username = "aragorn", Password = "wrong" });
-
-        result.Should().BeOfType<UnauthorizedObjectResult>();
     }
 }

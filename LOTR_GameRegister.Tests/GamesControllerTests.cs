@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Globalization;
 
-namespace LOTR_GameRegister.Api.Tests;
+namespace LOTR_GameRegister.Tests;
 
 [TestClass]
 public class GamesControllerTests

@@ -2,7 +2,7 @@ using FluentAssertions;
 using LOTR_GameRegister.Domain.Models.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LOTR_GameRegister.Api.Tests;
+namespace LOTR_GameRegister.Tests;
 
 [TestClass]
 public class GameTests

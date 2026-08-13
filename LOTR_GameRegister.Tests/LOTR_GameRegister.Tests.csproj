@@ -20,7 +20,7 @@
     <ProjectReference Include="../LOTR_GameRegister.Application/LOTR_GameRegister.Application.csproj" />
     <ProjectReference Include="../LOTR_GameRegister.Domain/LOTR_GameRegister.Domain.csproj" />
     <ProjectReference Include="../LOTR_GameRegister.Infrastructure/LOTR_GameRegister.Infrastructure.csproj" />
-    <ProjectReference Include="../LOTR_GameRegister.Api.csproj" />
+    <ProjectReference Include="../LOTR_GameRegister.Api/LOTR_GameRegister.Api.csproj" />
   </ItemGroup>
 
 </Project>

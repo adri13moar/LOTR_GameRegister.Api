@@ -5,7 +5,7 @@ using System.Collections;
 using System.Globalization;
 using System.Resources;
 
-namespace LOTR_GameRegister.Api.Tests;
+namespace LOTR_GameRegister.Tests;
 
 [TestClass]
 public class LocalizerTests
@@ -28,7 +28,9 @@ public class LocalizerTests
         {
             CultureInfo.CurrentUICulture = spanish;
 
-            foreach (DictionaryEntry entry in English.GetResourceSet(CultureInfo.InvariantCulture, true, true))
+            var resourceSet = English.GetResourceSet(CultureInfo.InvariantCulture, true, true)!;
+
+            foreach (DictionaryEntry entry in resourceSet)
             {
                 var key = (string)entry.Key;
                 var value = Localizer.Get(key);

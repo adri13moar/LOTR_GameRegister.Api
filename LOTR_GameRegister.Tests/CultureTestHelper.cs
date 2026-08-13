@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace LOTR_GameRegister.Api.Tests;
+namespace LOTR_GameRegister.Tests;
 
 /// <summary>
 /// Helps tests deal with environments that run in globalization-invariant mode

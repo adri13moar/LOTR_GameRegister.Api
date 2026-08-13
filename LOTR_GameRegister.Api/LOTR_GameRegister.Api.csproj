@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <UserSecretsId>de5c458b-bc3e-4061-a255-c70255d7038d</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../LOTR_GameRegister.Application/LOTR_GameRegister.Application.csproj" />
+    <ProjectReference Include="../LOTR_GameRegister.Infrastructure/LOTR_GameRegister.Infrastructure.csproj" />
+    <ProjectReference Include="../LOTR_GameRegister.Domain/LOTR_GameRegister.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

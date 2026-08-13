@@ -2,8 +2,8 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 COPY . .
-RUN dotnet restore LOTR_GameRegister.Api.slnx
-RUN dotnet publish LOTR_GameRegister.Api.csproj -c Release -o /app/publish
+RUN dotnet restore LOTR_GameRegister.slnx
+RUN dotnet publish LOTR_GameRegister.Api/LOTR_GameRegister.Api.csproj -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
