@@ -137,7 +137,7 @@ public class GamesControllerTests
 
         var result = await CreateController().Update(1, CreateGame());
 
-        result.Should().BeOfType<NotFoundResult>();
+        result.Should().BeOfType<NotFoundObjectResult>();
     }
 
     [TestMethod]
@@ -157,6 +157,6 @@ public class GamesControllerTests
 
         var result = await CreateController().Delete(1);
 
-        result.Should().BeOfType<NotFoundResult>();
+        result.Should().BeOfType<NotFoundObjectResult>();
     }
 }

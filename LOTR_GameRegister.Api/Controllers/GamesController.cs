@@ -61,7 +61,7 @@ namespace LOTR_GameRegister.Api.Controllers
             if (id != dto.Id) return BadRequest(Localizer.Get("IdMismatch"));
 
             var success = await gameService.UpdateGameAsync(dto);
-            if (!success) return NotFound();
+            if (!success) return NotFound(Localizer.Get("GameNotFound", id));
 
             return NoContent();
         }
@@ -74,7 +74,7 @@ namespace LOTR_GameRegister.Api.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var success = await gameService.DeleteGameAsync(id);
-            if (!success) return NotFound();
+            if (!success) return NotFound(Localizer.Get("GameNotFound", id));
 
             return NoContent();
         }

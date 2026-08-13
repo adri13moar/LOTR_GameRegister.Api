@@ -10,9 +10,6 @@
     "context7": {
       "type": "remote",
       "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "Authorization": "ctx7sk-fc4d1856-d826-40f6-b7a3-c99207cba4ab"
-      },
       "enabled": true
     }
   }

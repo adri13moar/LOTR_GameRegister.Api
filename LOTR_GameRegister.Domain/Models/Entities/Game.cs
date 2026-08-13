@@ -61,11 +61,6 @@
         public List<Hero> Heroes { get; set; } = new List<Hero>();
 
         /// <summary>
-        /// Users who played the game.
-        /// </summary>
-        public List<User> Users { get; set; } = [];
-
-        /// <summary>
         /// Recomputes derived values that depend only on the game's own state.
         /// </summary>
         public void Recalculate()

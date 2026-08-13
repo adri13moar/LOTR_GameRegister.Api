@@ -32,7 +32,8 @@ namespace LOTR_GameRegister.Infrastructure.Repositories.Implementations
                     c.Name_es as name_es, 
                     c.Category as category
                 FROM Quests q
-                INNER JOIN Cycles c ON q.CycleId = c.Id";
+                INNER JOIN Cycles c ON q.CycleId = c.Id
+                ORDER BY q.Id";
 
             return await db.QueryAsync<Quest, Cycle, Quest>(
                 sql,

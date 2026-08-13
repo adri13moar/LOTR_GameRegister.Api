@@ -21,7 +21,7 @@
 - **Swagger Documentation** — Interactive API documentation out of the box
 - **JWT Authentication** — Secure login/register with role-based authorization (Admin) and login rate limiting
 - **Localization** — User-facing messages served in English or Spanish via the `Accept-Language` header
-- **Unit Tests** — MSTest suite covering the service layer (13 tests)
+- **Unit Tests** — MSTest suite covering the service layer (54 tests)
 
 ### 🛠️ Tech Stack
 
@@ -36,19 +36,18 @@
 
 ### 📦 Quick Start
 
-#### Option A — Docker (SQL Server only, recommended for the DB)
+#### Option A — Docker (SQL Server + API)
 
-The `api` Docker build target is not fully wired up yet, so the simplest path is to
-run **only the database** with Docker and the API with `dotnet run`:
+Spin up the database (schema + seed via `init.sql`) and the API together:
 
 ```bash
 # 1. Create the secrets file (once)
 cp .env.example .env          # then edit the values
 
-# 2. Start SQL Server (initializes schema + seed data)
-docker compose up -d db
+# 2. Start SQL Server + API (initializes schema + seed data)
+docker compose up -d
 
-# 3. Configure the API connection string + JWT key (local development)
+# 3. Configure the connection string + JWT key (local development)
 dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=LOTR_GameRegister;User Id=sa;Password=<YOUR_SA_PASSWORD>;TrustServerCertificate=True;"
 dotnet user-secrets set "Jwt:Key" "<A_RANDOM_SECRET_AT_LEAST_32_CHARS>"
@@ -118,7 +117,7 @@ ORDER BY MatchesPlayed DESC;
 - **Documentación Swagger** — Documentación interactiva de la API lista para usar
 - **Autenticación JWT** — Login/registro seguro con autorización por roles (Admin) y limitación de intentos de login
 - **Localización** — Mensajes de usuario en inglés o español según la cabecera `Accept-Language`
-- **Tests Unitarios** — Suite MSTest para la capa de servicios (13 tests)
+- **Tests Unitarios** — Suite MSTest para la capa de servicios (54 tests)
 
 ### 🛠️ Stack Tecnológico
 
@@ -133,17 +132,16 @@ ORDER BY MatchesPlayed DESC;
 
 ### 📦 Inicio Rápido
 
-#### Opción A — Docker (solo SQL Server, recomendado para la BD)
+#### Opción A — Docker (SQL Server + API)
 
-El target de build Docker de la API aún no está completamente configurado, así que la
-vía más simple es ejecutar **solo la base de datos** con Docker y la API con `dotnet run`:
+Levanta la base de datos (esquema + seed mediante `init.sql`) y la API juntas:
 
 ```bash
 # 1. Crea el archivo de secretos (una vez)
 cp .env.example .env          # y edita los valores
 
-# 2. Inicia SQL Server (inicializa esquema + datos de seed)
-docker compose up -d db
+# 2. Inicia SQL Server + API (inicializa esquema + datos de seed)
+docker compose up -d
 
 # 3. Configura la cadena de conexión y la clave JWT (desarrollo local)
 dotnet user-secrets init

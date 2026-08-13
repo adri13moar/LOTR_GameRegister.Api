@@ -34,10 +34,5 @@
         /// Date and time (UTC) at which the account was created.
         /// </summary>
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        /// <summary>
-        /// Games the user has played.
-        /// </summary>
-        public List<Game> Games { get; set; } = [];
     }
 }

@@ -170,7 +170,8 @@ namespace LOTR_GameRegister.Infrastructure.Repositories.Implementations
         /// Updates the game row and rewrites its GameHeroes links (delete + re-insert) in a single transaction.
         /// </summary>
         /// <param name="game">The game to update, including the current hero list.</param>
-        /// <returns><c>true</c> if the update succeeded; otherwise <c>false</c>.</returns>
+        /// <returns><c>true</c> if the update succeeded; otherwise <c>false</c> when the game does not exist.</returns>
+        /// <exception cref="Exception">Re-thrown from the database when the update fails.</exception>
         public async Task<bool> UpdateAsync(Game game)
         {
             using var db = new SqlConnection(_connectionString);
@@ -179,59 +180,57 @@ namespace LOTR_GameRegister.Infrastructure.Repositories.Implementations
 
             using var transaction = db.BeginTransaction();
 
-            try
-            {
-                const string sqlUpdateGame = @"
-                    UPDATE Games 
-                    SET QuestId = @QuestId, 
-                        IsCampaignMode = @IsCampaignMode, 
-                        DifficultyId = @DifficultyId, 
-                        Spheres = @Spheres, 
-                        DeadHeroes = @DeadHeroes, 
-                        ResultId = @ResultId, 
-                        ReasonForDefeatId = @ReasonForDefeatId, 
-                        DatePlayed = @DatePlayed, 
-                        Notes = @Notes
-                    WHERE Id = @Id";
+            const string sqlUpdateGame = @"
+                UPDATE Games 
+                SET QuestId = @QuestId, 
+                    IsCampaignMode = @IsCampaignMode, 
+                    DifficultyId = @DifficultyId, 
+                    Spheres = @Spheres, 
+                    DeadHeroes = @DeadHeroes, 
+                    ResultId = @ResultId, 
+                    ReasonForDefeatId = @ReasonForDefeatId, 
+                    DatePlayed = @DatePlayed, 
+                    Notes = @Notes
+                WHERE Id = @Id";
 
-                await db.ExecuteAsync(sqlUpdateGame, game, transaction);
+            int rowsAffected = await db.ExecuteAsync(sqlUpdateGame, game, transaction);
 
-                const string sqlDeleteHeroes = @"
-                    DELETE FROM GameHeroes 
-                    WHERE GameId = @Id";
-
-                await db.ExecuteAsync(sqlDeleteHeroes, new { Id = game.Id }, transaction);
-
-                if (game.Heroes != null && game.Heroes.Any())
-                {
-                    const string sqlInsertHeroes = @"
-                        INSERT INTO GameHeroes (
-                            GameId, 
-                            HeroId,
-                            IsDead) 
-                        VALUES (
-                            @GameId, 
-                            @HeroId,
-                            @IsDead)";
-
-                    var batchHeroes = game.Heroes.Select(h => new
-                    {
-                        GameId = game.Id,
-                        HeroId = h.Id,
-                        IsDead = h.IsDead
-                    });
-
-                    await db.ExecuteAsync(sqlInsertHeroes, batchHeroes, transaction);
-                }
-
-                transaction.Commit();
-                return true;
-            }
-            catch
+            if (rowsAffected == 0)
             {
                 transaction.Rollback();
                 return false;
             }
+
+            const string sqlDeleteHeroes = @"
+                DELETE FROM GameHeroes 
+                WHERE GameId = @Id";
+
+            await db.ExecuteAsync(sqlDeleteHeroes, new { Id = game.Id }, transaction);
+
+            if (game.Heroes != null && game.Heroes.Any())
+            {
+                const string sqlInsertHeroes = @"
+                    INSERT INTO GameHeroes (
+                        GameId, 
+                        HeroId,
+                        IsDead) 
+                    VALUES (
+                        @GameId, 
+                        @HeroId,
+                        @IsDead)";
+
+                var batchHeroes = game.Heroes.Select(h => new
+                {
+                    GameId = game.Id,
+                    HeroId = h.Id,
+                    IsDead = h.IsDead
+                });
+
+                await db.ExecuteAsync(sqlInsertHeroes, batchHeroes, transaction);
+            }
+
+            transaction.Commit();
+            return true;
         }
 
         /// <summary>
