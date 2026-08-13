@@ -10,12 +10,14 @@ namespace LOTR_GameRegister.Application.Services.Implementations
     /// <param name="questRepository">Data access for quests.</param>
     public class QuestService(IQuestRepository questRepository) : IQuestService
     {
+        private readonly IQuestRepository _questRepository = questRepository ?? throw new ArgumentNullException(nameof(questRepository));
+
         /// <inheritdoc />
         public async Task<IEnumerable<Quest>> GetAllAsync()
-            => await questRepository.GetAllAsync();
+            => await _questRepository.GetAllAsync();
 
         /// <inheritdoc />
         public async Task<Quest?> GetByIdAsync(int id)
-            => await questRepository.GetByIdAsync(id);
+            => await _questRepository.GetByIdAsync(id);
     }
 }

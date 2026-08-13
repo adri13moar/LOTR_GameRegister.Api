@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);NETSDK1188</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +19,8 @@
   <ItemGroup>
     <ProjectReference Include="../LOTR_GameRegister.Application/LOTR_GameRegister.Application.csproj" />
     <ProjectReference Include="../LOTR_GameRegister.Domain/LOTR_GameRegister.Domain.csproj" />
+    <ProjectReference Include="../LOTR_GameRegister.Infrastructure/LOTR_GameRegister.Infrastructure.csproj" />
+    <ProjectReference Include="../LOTR_GameRegister.Api.csproj" />
   </ItemGroup>
 
 </Project>

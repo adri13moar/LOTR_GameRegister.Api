@@ -11,12 +11,14 @@ namespace LOTR_GameRegister.Application.Services.Implementations
     /// <param name="heroRepository">Data access for heroes.</param>
     public class HeroService(IHeroRepository heroRepository) : IHeroService
     {
+        private readonly IHeroRepository _heroRepository = heroRepository ?? throw new ArgumentNullException(nameof(heroRepository));
+
         /// <inheritdoc />
         public async Task<IEnumerable<Hero>> GetAllAsync()
-            => await heroRepository.GetAllAsync();
+            => await _heroRepository.GetAllAsync();
 
         /// <inheritdoc />
         public async Task<Hero?> GetByIdAsync(int id)
-            => await heroRepository.GetByIdAsync(id);
+            => await _heroRepository.GetByIdAsync(id);
     }
 }

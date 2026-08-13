@@ -10,12 +10,14 @@ namespace LOTR_GameRegister.Application.Services.Implementations
     /// <param name="cycleRepository">Data access for cycles.</param>
     public class CycleService(ICycleRepository cycleRepository) : ICycleService
     {
+        private readonly ICycleRepository _cycleRepository = cycleRepository ?? throw new ArgumentNullException(nameof(cycleRepository));
+
         /// <inheritdoc />
         public async Task<IEnumerable<Cycle>> GetAllAsync()
-            => await cycleRepository.GetAllAsync();
+            => await _cycleRepository.GetAllAsync();
 
         /// <inheritdoc />
         public async Task<Cycle?> GetByIdAsync(int id)
-            => await cycleRepository.GetByIdAsync(id);
+            => await _cycleRepository.GetByIdAsync(id);
     }
 }

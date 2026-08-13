@@ -14,14 +14,18 @@ namespace LOTR_GameRegister.Application.Services.Implementations
     /// <param name="logger">Logger for game operations.</param>
     public class GameService(IGameRepository gameRepository, IHeroRepository heroRepository, ILogger<GameService> logger) : IGameService
     {
+        private readonly IGameRepository _gameRepository = gameRepository ?? throw new ArgumentNullException(nameof(gameRepository));
+        private readonly IHeroRepository _heroRepository = heroRepository ?? throw new ArgumentNullException(nameof(heroRepository));
+        private readonly ILogger<GameService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         /// <inheritdoc />
         public async Task<IEnumerable<GameDto>> GetAllGamesAsync()
-            => (await gameRepository.GetAllAsync()).Select(ToDto);
+            => (await _gameRepository.GetAllAsync()).Select(ToDto);
 
         /// <inheritdoc />
         public async Task<GameDto?> GetGameByIdAsync(int id)
         {
-            var game = await gameRepository.GetByIdAsync(id);
+            var game = await _gameRepository.GetByIdAsync(id);
             return game is null ? null : ToDto(game);
         }
 
@@ -32,8 +36,8 @@ namespace LOTR_GameRegister.Application.Services.Implementations
             game.DatePlayed = DateOnly.FromDateTime(DateTime.UtcNow);
             await Recalculate(game);
 
-            var gameId = await gameRepository.CreateAsync(game);
-            logger.LogInformation("Created game {GameId} with {HeroCount} heroes.", gameId, game.Heroes.Count);
+            var gameId = await _gameRepository.CreateAsync(game);
+            _logger.LogInformation("Created game {GameId} with {HeroCount} heroes.", gameId, game.Heroes.Count);
             return gameId;
         }
 
@@ -43,16 +47,16 @@ namespace LOTR_GameRegister.Application.Services.Implementations
             var game = ToEntity(dto);
             await Recalculate(game);
 
-            var updated = await gameRepository.UpdateAsync(game);
-            logger.LogInformation("Updated game {GameId}.", game.Id);
+            var updated = await _gameRepository.UpdateAsync(game);
+            _logger.LogInformation("Updated game {GameId}.", game.Id);
             return updated;
         }
 
         /// <inheritdoc />
         public async Task<bool> DeleteGameAsync(int id)
         {
-            var deleted = await gameRepository.DeleteByIdAsync(id);
-            logger.LogInformation("Deleted game {GameId}.", id);
+            var deleted = await _gameRepository.DeleteByIdAsync(id);
+            _logger.LogInformation("Deleted game {GameId}.", id);
             return deleted;
         }
 
@@ -61,7 +65,7 @@ namespace LOTR_GameRegister.Application.Services.Implementations
             game.Recalculate();
 
             game.Spheres = game.Heroes.Count > 0
-                ? (await heroRepository.GetByIdsAsync(game.Heroes.Select(hero => hero.Id).ToList()))
+                ? (await _heroRepository.GetByIdsAsync(game.Heroes.Select(hero => hero.Id).ToList()))
                     .Select(hero => hero.SphereId)
                     .Distinct()
                     .Count()

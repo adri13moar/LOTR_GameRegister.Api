@@ -140,4 +140,54 @@ public class UserServiceTests
         users[0].Role.Should().Be("Admin");
         users[0].CreatedAt.Should().Be(new DateTime(2024, 1, 1, 12, 0, 0, DateTimeKind.Utc));
     }
+
+    [TestMethod]
+    public void Constructor_WithNullUserRepository_ThrowsArgumentNullException()
+    {
+        var act = () => new UserService(null!, _tokenService.Object, _logger.Object);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [TestMethod]
+    public void Constructor_WithNullTokenService_ThrowsArgumentNullException()
+    {
+        var act = () => new UserService(_userRepository.Object, null!, _logger.Object);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [TestMethod]
+    public void Constructor_WithNullLogger_ThrowsArgumentNullException()
+    {
+        var act = () => new UserService(_userRepository.Object, _tokenService.Object, null!);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [TestMethod]
+    public async Task GetAllUsersAsync_WhenEmpty_ReturnsEmpty()
+    {
+        _userRepository.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<User>());
+
+        var users = await CreateService().GetAllUsersAsync();
+
+        users.Should().BeEmpty();
+    }
+
+    [TestMethod]
+    public async Task RegisterAsync_WhenRepositoryFailsToCreate_ReturnsUsernameOrEmailTaken()
+    {
+        _userRepository.Setup(r => r.ExistsAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(false);
+        _userRepository.Setup(r => r.CreateAsync(It.IsAny<User>())).ReturnsAsync(0);
+
+        var result = await CreateService().RegisterAsync(new UserRegistrationDto
+        {
+            Username = "aragorn",
+            Email = "aragorn@gondor.test",
+            Password = "Anduril123!"
+        });
+
+        result.Should().Be(RegisterResult.UsernameOrEmailTaken);
+    }
 }

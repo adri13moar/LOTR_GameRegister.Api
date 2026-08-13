@@ -10,12 +10,14 @@ namespace LOTR_GameRegister.Application.Services.Implementations
     /// <param name="sphereRepository">Data access for spheres.</param>
     public class SphereService(ISphereRepository sphereRepository) : ISphereService
     {
+        private readonly ISphereRepository _sphereRepository = sphereRepository ?? throw new ArgumentNullException(nameof(sphereRepository));
+
         /// <inheritdoc />
         public async Task<IEnumerable<Sphere>> GetAllAsync()
-            => await sphereRepository.GetAllAsync();
+            => await _sphereRepository.GetAllAsync();
 
         /// <inheritdoc />
         public async Task<Sphere?> GetByIdAsync(int id)
-            => await sphereRepository.GetByIdAsync(id);
+            => await _sphereRepository.GetByIdAsync(id);
     }
 }

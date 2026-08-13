@@ -13,10 +13,12 @@ namespace LOTR_GameRegister.Infrastructure.Security;
 /// </summary>
 public class TokenService(IConfiguration config) : ITokenService
 {
+    private readonly IConfiguration _config = config ?? throw new ArgumentNullException(nameof(config));
+
     /// <inheritdoc />
     public string GenerateJwtToken(User user)
     {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -28,10 +30,10 @@ public class TokenService(IConfiguration config) : ITokenService
         };
 
         var token = new JwtSecurityToken(
-            issuer: config["Jwt:Issuer"],
-            audience: config["Jwt:Audience"],
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(double.Parse(config["Jwt:DurationInMinutes"]!)),
+            expires: DateTime.UtcNow.AddMinutes(double.Parse(_config["Jwt:DurationInMinutes"]!)),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

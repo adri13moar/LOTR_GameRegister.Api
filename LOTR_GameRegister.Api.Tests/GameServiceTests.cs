@@ -142,4 +142,55 @@ public class GameServiceTests
         deleted.Should().BeTrue();
         _gameRepository.Verify(r => r.DeleteByIdAsync(5), Times.Once);
     }
+
+    [TestMethod]
+    public void Constructor_WithNullGameRepository_ThrowsArgumentNullException()
+    {
+        var act = () => new GameService(null!, _heroRepository.Object, _logger.Object);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [TestMethod]
+    public void Constructor_WithNullHeroRepository_ThrowsArgumentNullException()
+    {
+        var act = () => new GameService(_gameRepository.Object, null!, _logger.Object);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [TestMethod]
+    public void Constructor_WithNullLogger_ThrowsArgumentNullException()
+    {
+        var act = () => new GameService(_gameRepository.Object, _heroRepository.Object, null!);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [TestMethod]
+    public async Task GetAllGamesAsync_WhenEmpty_ReturnsEmpty()
+    {
+        _gameRepository.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<Game>());
+
+        var games = await CreateService().GetAllGamesAsync();
+
+        games.Should().BeEmpty();
+    }
+
+    [TestMethod]
+    public async Task CreateGameAsync_WithNoHeroes_SetsDerivedValuesToZero()
+    {
+        _gameRepository.Setup(r => r.CreateAsync(It.IsAny<Game>())).ReturnsAsync(1);
+
+        var id = await CreateService().CreateGameAsync(new CreateGameDto
+        {
+            QuestId = 1,
+            DifficultyId = 2,
+            ResultId = 1
+        });
+
+        id.Should().Be(1);
+        _gameRepository.Verify(r => r.CreateAsync(It.Is<Game>(g => g.DeadHeroes == 0 && g.Spheres == 0)), Times.Once);
+        _heroRepository.Verify(r => r.GetByIdsAsync(It.IsAny<List<int>>()), Times.Never);
+    }
 }
