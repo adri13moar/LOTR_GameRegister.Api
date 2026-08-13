@@ -10,6 +10,8 @@ dotnet run          # http://localhost:5130 (Dev), https://localhost:7052
 dotnet watch run
 ```
 
+Local secrets (never committed): set `Jwt:Key` + `ConnectionStrings:DefaultConnection` via `dotnet user-secrets` (see README "Local environment setup"). For the agent machine, `CONTEXT7_API_KEY` must be set in the environment (referenced from `opencode.json` via `{env:...}`). To test against a real DB without installing SQL Server: `docker compose up -d db` (auto-seeds from `init.sql`).
+
 Unit tests live in `LOTR_GameRegister.Tests` (MSTest + Moq + FluentAssertions) — run them with `dotnet test LOTR_GameRegister.Tests/LOTR_GameRegister.Tests.csproj`.
 
 ## Architecture

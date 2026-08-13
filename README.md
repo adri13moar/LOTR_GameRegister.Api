@@ -76,6 +76,24 @@ steps 3–4 above.
 2. `POST /api/authentication/login` with `{ "username", "password" }` → returns a JWT.
 3. Call protected endpoints (e.g. `/api/games`) with header `Authorization: Bearer <token>`.
 
+#### Local environment setup (secrets)
+
+The API requires a `Jwt:Key` and a DB connection string; never commit them. Configure
+them once per machine (stored in `~/.microsoft/usersecrets` or as env vars):
+
+```bash
+dotnet user-secrets init
+dotnet user-secrets set "Jwt:Key" "<A_RANDOM_SECRET_AT_LEAST_32_CHARS>"
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=LOTR_GameRegister;User Id=sa;Password=<YOUR_SA_PASSWORD>;TrustServerCertificate=True;"
+```
+
+When running via Docker Compose, fill `.env` instead (see `.env.example`) — the compose
+`api` service maps `MSSQL_SA_PASSWORD` and `JWT_KEY` to the connection string and JWT key.
+
+Testing without a hand-installed SQL Server: `docker compose up -d db` seeds the full
+database (121 quests, 103 heroes, 10 example games). The unit test suite is fully mocked
+and runs with no database: `dotnet test LOTR_GameRegister.Tests/LOTR_GameRegister.Tests.csproj`.
+
 ### 📊 Data Insights (SQL Example)
 
 Get match statistics per hero:
@@ -172,6 +190,24 @@ y sigue los pasos 3–4 anteriores.
 1. `POST /api/authentication/register` con `{ "username", "email", "password" }`.
 2. `POST /api/authentication/login` con `{ "username", "password" }` → devuelve un JWT.
 3. Llama a los endpoints protegidos (p. ej. `/api/games`) con la cabecera `Authorization: Bearer <token>`.
+
+#### Configuración local (secretos)
+
+La API necesita una `Jwt:Key` y una cadena de conexión a la BD; nunca las compartas. Configúralas
+una vez por máquina (se guardan en `~/.microsoft/usersecrets` o como variables de entorno):
+
+```bash
+dotnet user-secrets init
+dotnet user-secrets set "Jwt:Key" "<UN_SECRETO_ALEATORIO_DE_AL_MENOS_32_CARACTERES>"
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=LOTR_GameRegister;User Id=sa;Password=<TU_PASSWORD_SA>;TrustServerCertificate=True;"
+```
+
+Cuando uses Docker Compose, rellena `.env` en su lugar (ver `.env.example`) — el servicio
+`api` del compose mapea `MSSQL_SA_PASSWORD` y `JWT_KEY` a la cadena de conexión y la clave JWT.
+
+Para probar sin tener SQL Server instalado a mano: `docker compose up -d db` siembra la base
+completa (121 aventuras, 103 héroes, 10 partidas de ejemplo). La suite de tests unitarios está
+totalmente mockeada y no necesita base de datos: `dotnet test LOTR_GameRegister.Tests/LOTR_GameRegister.Tests.csproj`.
 
 ### 📊 Ejemplo de Consulta (SQL)
 
